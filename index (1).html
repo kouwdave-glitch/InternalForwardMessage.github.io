@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>INTERNAL MESSENGER 98 PLUS</title>
+<style>
+:root{--crt:#10180f;--phosphor:#b6ff9b;--beige:#d7d3c1;--panel:#c4c1b0;--bubble:#f0eddd;--sent:#c8dfb8;--ink:#222;--toolbar:#343b31;--message-pattern:radial-gradient(#b3b0a2 1px,transparent 1px)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:#101510;color:var(--phosphor);font-family:"Courier New",monospace}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #8bdc78;outline-offset:2px}
+.screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:18px}
+.computer{width:min(780px,100%);background:#b8b5a3;padding:18px;border:5px solid #ded9c3;border-radius:15px;box-shadow:0 20px 70px #000}
+.monitor{background:var(--crt);border:9px solid #69695f;border-radius:10px;padding:22px;min-height:300px;box-shadow:inset 0 0 25px #000}
+.brand{text-align:center;color:#c8c3ad;margin-bottom:14px;letter-spacing:3px}
+h1{text-align:center;font-size:clamp(22px,5vw,35px)}
+.center{text-align:center}
+button{padding:8px 12px;border:2px outset #aaa;background:#d3cfbc;color:#222}
+.greenbtn{background:#31552b;color:#e0ffd5;border-color:#a5b79a}
+.action{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0}
+#bootScreen,#authScreen,#messengerApp{display:none}
+#bootLog .bootline{margin:8px 0;font-size:12px}
+.bar{height:16px;border:1px solid var(--phosphor);margin-top:22px}
+#progress{height:100%;width:0;background:var(--phosphor)}
+#authScreen .monitor{min-height:0}
+.field{display:block;width:100%;padding:10px;margin:8px 0 14px;background:#f4f1e3;color:#222;border:2px inset #aaa}
+label{display:block;font-size:12px}
+.note{color:#c8c3ad;font-size:12px;line-height:1.5}
+#error{color:#ffadad;font-size:13px;white-space:pre-wrap}
+.language-control{display:flex;align-items:center;gap:6px;justify-content:center;margin:8px auto 12px;color:#c8c3ad;font-size:12px}
+.language-select,.theme-select,.wallpaper-select{padding:5px 7px;border:2px outset #aaa;background:#d3cfbc;color:#222;font-family:inherit;font-size:11px;max-width:150px}
+#messengerApp{height:100dvh;min-height:540px;flex-direction:column;background:var(--beige);color:var(--ink)}
+.topbar{background:var(--toolbar);color:#d6ffbe;padding:8px 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.brandtitle{letter-spacing:1px;font-weight:bold}
+.user-label{font-size:11px;max-width:100px;overflow-wrap:anywhere;color:#d6ffbe}
+.tools{display:flex;align-items:center;gap:5px;flex-wrap:wrap;justify-content:flex-end}
+.topbar button{padding:6px 8px;font-size:11px}
+.topbar .language-control{margin:0;color:#d6ffbe}
+.topbar .language-control label{display:none}
+.desktop{display:flex;flex:1;min-height:0}
+.sidebar{width:245px;max-width:38%;border-right:3px solid #77796d;display:flex;flex-direction:column;background:#cbc7b7}
+.sidehead{padding:10px;background:var(--panel);border-bottom:2px solid #858578}
+.sideheadline{display:flex;align-items:center;justify-content:space-between;gap:5px}
+#search{width:100%;padding:7px;border:2px inset #aaa;background:#f4f1e3;color:#222;margin-top:9px}
+#contactList{overflow-y:auto;min-height:0}
+.contact{width:100%;border:0;border-bottom:1px solid #aaa;background:transparent;padding:10px 8px;text-align:left;color:#222;display:flex;align-items:center;gap:8px;overflow-wrap:anywhere}
+.contact.active,.contact:hover{background:#4a6242;color:white}
+.contact-text{min-width:0;flex:1}
+.contact-name{display:block;font-weight:bold;overflow:hidden;text-overflow:ellipsis}
+.contact-sub{font-size:10px;opacity:.8;display:block;margin-top:3px}
+.presence{width:8px;height:8px;border-radius:50%;background:#777;flex:0 0 8px}
+.presence.online{background:#219444;box-shadow:0 0 4px #4be77f}
+.unread{font-size:10px;background:#8f2929;color:#fff;border-radius:10px;padding:2px 6px;margin-left:auto}
+.chat{flex:1;min-width:0;display:flex;flex-direction:column}
+.chathead{padding:8px;background:var(--panel);border-bottom:2px solid #aaa;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.chat-title-area{min-width:0;flex:1}
+.chat-title-area strong{display:block;overflow-wrap:anywhere}
+#connection{font-size:10px;margin-top:5px;color:#42583b}
+#typingIndicator{font-size:11px;color:#42583b;margin-top:4px;min-height:13px;overflow-wrap:anywhere}
+#messageSearch{max-width:180px;width:40%;padding:6px;border:2px inset #aaa;background:#fffdf0;color:#222;font-size:11px}
+#messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background-color:#d9d6c7;background-image:var(--message-pattern);background-size:7px 7px}
+.message-row{display:flex;align-items:flex-end;gap:6px;max-width:100%;align-self:flex-start}
+.message-row.me{align-self:flex-end;flex-direction:row-reverse}
+.avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:2px solid #56634d;background:#42583b;color:#e0ffd5;display:flex;align-items:center;justify-content:center;font-weight:bold;overflow:hidden;font-size:12px}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.my-avatar{width:28px;height:28px;flex-basis:28px;background:#c8dfb8;color:#243321;border-color:#aeb9a2}
+.message-body{min-width:0;max-width:min(82%,560px)}
+.msg{padding:9px 10px;border:2px solid #72756b;background:var(--bubble);overflow-wrap:anywhere;white-space:pre-wrap}
+.msg.me{background:var(--sent)}
+.msg .meta{display:block;margin-top:6px;font-size:10px;color:#55594d;overflow-wrap:anywhere}
+.msg-image{display:block;max-width:min(320px,100%);max-height:300px;object-fit:contain;margin:4px 0}
+.reply-quote{border-left:3px solid #537349;background:#e0e1d5;padding:5px 7px;margin-bottom:7px;font-size:11px;color:#444;white-space:pre-wrap;overflow-wrap:anywhere}
+.translation{border-top:1px dashed #888;margin-top:7px;padding-top:6px;font-size:12px;color:#384b31;white-space:pre-wrap}
+.message-actions{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.mini-btn{padding:3px 5px;border:1px solid #999;background:#e4e0cf;font-size:11px;line-height:1.15}
+.mini-btn.active{background:#b6dba5;border-color:#3c6833}
+#messageArea{position:relative;background:var(--panel);border-top:2px solid #999}
+#replyPreview{padding:6px 9px;background:#dfdccb;border-bottom:1px solid #aaa;font-size:11px;color:#333;display:flex;justify-content:space-between;gap:6px}
+#replyPreviewText{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#attachmentPreview{padding:6px 9px;font-size:11px;color:#333;display:flex;align-items:center;gap:8px}
+#attachmentPreview img{max-width:70px;max-height:60px;object-fit:contain}
+#messageForm{display:flex;padding:8px;gap:5px;align-items:center}
+#messageInput{min-width:0;flex:1;padding:9px;border:2px inset #aaa;background:#fffdf0;color:#222}
+#messageForm button{background:#42583b;color:white;border-color:#aeb9a2;padding:8px}
+#emojiPicker{display:flex;flex-wrap:wrap;gap:4px;padding:7px;border-bottom:1px solid #999;background:#d5d1bf}
+#emojiPicker button{padding:4px 7px;font-size:19px}
+#attachmentInput{display:none}
+.status{padding:6px 10px;background:#30382c;color:#c9ffb9;font-size:10px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}
+#profileStatus{font-size:10px;min-height:14px;padding:3px 9px;color:#42583b;background:var(--panel)}
+.modal{border:4px solid #77796d;background:#c4c1b0;color:#222;padding:0;width:min(480px,calc(100% - 22px));max-height:85vh;overflow:auto;box-shadow:0 15px 50px #0008}
+.modal::backdrop{background:#0009}
+.modal-header{background:#343b31;color:#d6ffbe;padding:10px;font-weight:bold}
+.modal-content{padding:14px}
+.modal-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-top:12px}
+.modal input,.modal select,.modal textarea{width:100%;padding:9px;margin-top:6px;background:#fffdf0;border:2px inset #aaa;color:#222}
+.modal-list{padding-left:20px;line-height:1.5}
+.modal-item{padding:8px 0;border-bottom:1px solid #aaa;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.modal-item-name{min-width:0;overflow-wrap:anywhere}
+.small-btn{font-size:10px;padding:5px 7px;white-space:nowrap}
+.empty-note{color:#444;font-size:12px}
+.body-amber{--crt:#211608;--phosphor:#ffc96b;--toolbar:#493017;--beige:#d8c5a3;--panel:#cdb894;--bubble:#fff1d4;--sent:#f4d7a0}
+.body-blue{--crt:#071a2b;--phosphor:#99d8ff;--toolbar:#173d61;--beige:#c8d6df;--panel:#b4c7d4;--bubble:#eef7ff;--sent:#c5e2fa}
+.body-mono{--crt:#090909;--phosphor:#ededed;--toolbar:#292929;--beige:#cfcfcf;--panel:#bdbdbd;--bubble:#f5f5f5;--sent:#dedede}
+.wallpaper-plain{--message-pattern:none}
+.wallpaper-lines{--message-pattern:repeating-linear-gradient(0deg,#b9b6a8 0 1px,transparent 1px 5px)}
+.wallpaper-grid{--message-pattern:linear-gradient(#b3b0a2 1px,transparent 1px),linear-gradient(90deg,#b3b0a2 1px,transparent 1px)}
+.wallpaper-grid #messages{background-size:12px 12px}
+.wallpaper-dots{--message-pattern:radial-gradient(#b3b0a2 1px,transparent 1px)}
+.scanlines{pointer-events:none;position:fixed;inset:0;z-index:20;background:repeating-linear-gradient(transparent 0 3px,#0002 4px);opacity:.23}
+
+/* RETRO PROFILE CARD — 1998 STYLE */
+.profile-viewer-head{display:flex;justify-content:center;align-items:center;padding:7px 0 3px}
+.profile-avatar-large{width:86px;height:86px;flex-basis:86px;font-size:28px;border:4px double #56634d;box-shadow:0 0 0 3px #e8e4d3,0 0 0 5px #74766b;margin:8px auto 15px}
+.profile-viewer-name{text-align:center;font-size:22px;margin:4px 0;color:#20251d;overflow-wrap:anywhere}
+.profile-viewer-username{text-align:center;font-size:12px;color:#53604d;margin:0 0 16px;overflow-wrap:anywhere}
+.profile-status-box{border:3px double #858578;background:#e8e4d3;padding:10px;margin:12px 0;min-height:52px;white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px}
+.profile-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.profile-meta-box{border:2px inset #aaa;background:#d9d5c5;padding:9px;min-width:0}
+.profile-meta-label{display:block;font-size:10px;color:#55594d;margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.profile-meta-value{display:block;font-size:12px;overflow-wrap:anywhere}
+.profile-online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#16833c;margin-right:6px}
+.profile-online-dot.offline{background:#777}
+.profile-retro-tag{display:inline-block;border:1px solid #626a5b;background:#34442f;color:#d6ffbe;padding:3px 7px;font-size:10px;letter-spacing:1px}
+
+/* RETRO CHAT ROOMS */
+.sidebar-section-label{padding:7px 9px;background:#b8b5a3;border-top:2px solid #949486;border-bottom:1px solid #949486;font-weight:bold;font-size:10px;letter-spacing:1px;color:#30362b}
+.room-mini-tag{font-size:9px;display:inline-block;margin-top:3px;padding:1px 4px;border:1px solid currentColor;opacity:.85}
+.room-dialog-list{max-height:260px;overflow:auto;border:1px solid #96968a;background:#d7d3c1;padding:4px}
+.room-card{display:flex;align-items:center;gap:8px;padding:8px 5px;border-bottom:1px solid #aaa}
+.room-card:last-child{border-bottom:0}
+.room-card-info{flex:1;min-width:0}
+.room-card-name{font-weight:bold;overflow-wrap:anywhere}
+.room-card-meta{font-size:10px;color:#4d5146;margin-top:3px;overflow-wrap:anywhere}
+.room-card button{padding:5px 7px;font-size:10px;white-space:nowrap}
+.room-form-grid{display:grid;grid-template-columns:1fr;gap:9px;margin-top:10px}
+.room-form-grid label{margin-top:2px}
+.room-form-grid input,.room-form-grid textarea,.room-form-grid select{display:block;width:100%;padding:8px;margin-top:5px;border:2px inset #aaa;background:#fffdf0;color:#222;font-family:inherit}
+.room-help{font-size:11px;color:#4b4c43;line-height:1.5}
+.room-owner-badge{font-size:9px;background:#c3d9b6;border:1px solid #61775a;padding:2px 5px;white-space:nowrap}
+#roomInfoButton{white-space:nowrap}
+@media(max-width:650px){.room-card{align-items:flex-start}.room-card button{padding:4px;font-size:9px}.room-card-meta{font-size:9px}}
+
+@media(max-width:650px){.profile-meta-grid{grid-template-columns:1fr}.profile-avatar-large{width:74px;height:74px;flex-basis:74px}}
+
+@media(max-width:650px){
+ .computer{padding:9px}
+ .monitor{padding:14px 9px;border-width:6px}
+ .screen{padding:8px}
+ .sidebar{width:125px;max-width:34%}
+ .sidehead{padding:7px;font-size:11px}
+ .contact{padding:9px 5px;gap:4px;font-size:11px}
+ .contact-sub{font-size:9px}
+ #search{font-size:11px;padding:6px}
+ .chathead{padding:8px;font-size:12px}
+ #messages{padding:7px;gap:8px}
+ .msg{font-size:12px;padding:7px}
+ .message-body{max-width:calc(100% - 35px)}
+ .avatar{width:28px;height:28px;flex-basis:28px}
+ #messageForm{padding:5px;gap:4px}
+ #messageForm button{padding:6px 7px;font-size:11px}
+ .tools{gap:3px}
+ .user-label{font-size:10px;max-width:72px}
+ .topbar{font-size:11px;padding:7px}
+ .topbar button{padding:5px;font-size:10px}
+ .topbar .language-select,.theme-select,.wallpaper-select{max-width:95px;padding:4px;font-size:10px}
+ .status{font-size:9px}
+ #messageSearch{width:100%;max-width:none}
+ .message-body{max-width:calc(100% - 35px)}
+}
+
+/* CINEMATIC STARTUP: INTERNAL FORWARD OS */
+#bootScreen.screen{position:fixed;inset:0;z-index:30;min-height:100dvh;padding:clamp(8px,2vw,24px);overflow:hidden;background:radial-gradient(ellipse at 50% 42%,#0b1c0e 0%,#030704 45%,#010201 100%);color:#b6ff9b}
+#bootScreen.screen::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.33;background:repeating-linear-gradient(to bottom,transparent 0 3px,#000 4px);z-index:2}
+#bootScreen.screen::after{content:"";position:absolute;width:100%;height:25%;top:-30%;left:0;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(102,255,125,.07),transparent);animation:bootSweep 4.8s linear infinite;z-index:2}
+#bootScreen .computer{position:relative;z-index:1;width:min(1120px,100%);padding:clamp(8px,2.5vw,28px);background:transparent;border:0;border-radius:0;box-shadow:none}
+#bootScreen .monitor{position:relative;min-height:min(720px,92dvh);display:flex;flex-direction:column;justify-content:center;overflow:hidden;padding:clamp(22px,5vw,62px);border:1px solid #294c30;border-radius:4px;background:linear-gradient(145deg,rgba(5,17,7,.98),rgba(1,4,2,.99) 60%,rgba(4,16,6,.98));box-shadow:0 0 70px rgba(61,255,93,.12),inset 0 0 90px rgba(28,122,43,.12);animation:monitorWake .85s ease-out both}
+#bootScreen .monitor::before{content:"";position:absolute;inset:9px;border:1px solid rgba(124,255,142,.1);pointer-events:none}
+#bootScreen .language-control{position:absolute;top:clamp(14px,3vw,28px);right:clamp(14px,3vw,28px);margin:0;z-index:4;color:#8ba88d;font-size:10px}
+#bootScreen .language-control label{display:none}
+#bootScreen .language-select{max-width:130px;background:#08110a;color:#b6ff9b;border:1px solid #315b37;border-radius:0}
+.boot-chrome,.boot-footer{position:absolute;left:clamp(22px,5vw,62px);right:clamp(22px,5vw,62px);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;color:#52795a;font-size:10px;letter-spacing:1.4px;text-transform:uppercase}
+.boot-chrome{top:clamp(18px,3vw,34px);padding-bottom:12px;border-bottom:1px solid #1c3821}
+.boot-footer{bottom:clamp(18px,3vw,34px);padding-top:12px;border-top:1px solid #1c3821;color:#426649;letter-spacing:1px}
+.cinema-center{width:min(700px,100%);margin:26px auto 18px;text-align:center;position:relative;z-index:3}
+.cinema-emblem{display:flex;align-items:center;justify-content:center;gap:7px;margin:0 auto 17px;width:76px;height:76px;border:1px solid #6dd77b;color:#c9ffd0;font-size:27px;font-weight:bold;letter-spacing:-3px;text-shadow:0 0 16px #72ff80;box-shadow:0 0 25px rgba(96,255,121,.12),inset 0 0 20px rgba(96,255,121,.1);animation:emblemPulse 2.8s ease-in-out infinite}
+.cinema-emblem span{font-size:12px;letter-spacing:0;color:#71ba7b;align-self:flex-start;margin-top:12px}
+.cinema-brand{font-size:clamp(24px,5.5vw,56px);font-weight:300;letter-spacing:clamp(3px,1vw,10px);color:#9fcba4;text-shadow:0 0 18px rgba(100,255,123,.2);line-height:1.05}
+.cinema-brand strong{display:block;font-weight:700;color:#dcffe0;letter-spacing:clamp(5px,1.4vw,14px);margin-top:7px}
+.cinema-subtitle{margin-top:16px;color:#628768;font-size:clamp(9px,1.6vw,12px);letter-spacing:clamp(2px,.6vw,6px)}
+.cinema-divider{height:1px;width:min(350px,70%);margin:25px auto 23px;background:linear-gradient(90deg,transparent,#477d4f,transparent)}
+#bootScreen h1{margin:0 0 16px;font-size:clamp(12px,2vw,16px);letter-spacing:clamp(1px,.4vw,4px);font-weight:normal;color:#b6ff9b;text-align:center;text-shadow:0 0 12px rgba(90,255,106,.35)}
+#bootLog{width:min(510px,100%);min-height:118px;margin:0 auto;text-align:left;font-size:clamp(10px,1.5vw,12px);line-height:1.7;color:#78b981}
+#bootLog .bootline{margin:3px 0;animation:lineAppears .24s ease-out both}
+#bootLog .bootline::before{content:"[  OK  ]  ";color:#c7ffd0;text-shadow:0 0 7px rgba(104,255,126,.45)}
+#bootScreen .bar{width:min(510px,100%);height:8px;margin:20px auto 0;border:1px solid #345c3b;padding:1px;background:#040905;box-shadow:0 0 12px rgba(55,255,83,.08)}
+#bootScreen #progress{height:100%;width:0;background:linear-gradient(90deg,#387846,#b7ff9c);box-shadow:0 0 16px rgba(122,255,132,.65);transition:width .42s cubic-bezier(.2,.75,.25,1)}
+#bootScreen #progressText{width:min(510px,100%);margin:8px auto 0;text-align:right;color:#78a880;font-size:11px;letter-spacing:2px}
+.cinema-final{opacity:0;transform:translateY(5px);margin-top:14px;color:#d7ffdc;font-size:11px;letter-spacing:2px;min-height:14px;text-shadow:0 0 10px rgba(111,255,125,.5);transition:opacity .5s,transform .5s}
+.cinema-final.ready{opacity:1;transform:translateY(0)}
+#bootScreen.boot-complete .monitor{animation:monitorFlash .55s ease-out}
+#bootScreen.boot-complete .cinema-emblem{box-shadow:0 0 34px rgba(116,255,133,.45),inset 0 0 26px rgba(116,255,133,.2)}
+@keyframes bootSweep{0%{top:-30%}100%{top:110%}}
+@keyframes monitorWake{0%{opacity:0;transform:scaleY(.025) scaleX(.8);filter:brightness(4)}45%{opacity:1;transform:scaleY(1.01) scaleX(1);filter:brightness(1.8)}100%{opacity:1;transform:scaleY(1) scaleX(1);filter:brightness(1)}}
+@keyframes emblemPulse{0%,100%{filter:brightness(.88);transform:translateY(0)}50%{filter:brightness(1.25);transform:translateY(-2px)}}
+@keyframes lineAppears{from{opacity:0;transform:translateX(-7px)}to{opacity:1;transform:translateX(0)}}
+@keyframes monitorFlash{0%{filter:brightness(1)}25%{filter:brightness(1.9)}100%{filter:brightness(1)}}
+@media(max-width:600px){#bootScreen .monitor{min-height:90dvh;padding:24px 16px}.boot-chrome,.boot-footer{left:18px;right:18px;font-size:8px;letter-spacing:.6px}.cinema-center{margin-top:36px}.cinema-emblem{width:58px;height:58px;font-size:22px}#bootLog{min-height:114px}.cinema-divider{margin:18px auto}#bootScreen .language-control{top:48px;right:18px}}
+@media(prefers-reduced-motion:reduce){#bootScreen.screen::after,#bootScreen .monitor,.cinema-emblem{animation:none!important}#bootScreen #progress{transition:none}}
+
+</style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<section id="powerScreen" class="screen">
+ <div class="computer">
+  <div class="brand">INTERNAL COMPUTER SYSTEMS</div>
+  <div class="language-control">
+   <label for="languagePower" data-i18n="language">BAHASA</label>
+   <select id="languagePower" class="language-select">
+    <option value="id">Bahasa Indonesia</option>
+    <option value="en">English</option>
+   </select>
+  </div>
+  <div class="monitor">
+   <p class="center" data-i18n="modelCaption">MODEL 1998 · KOMPUTER PRIBADI</p>
+   <h1>INTERNAL FORWARD</h1>
+   <p class="center" data-i18n="terminalCaption">TERMINAL KOMUNIKASI RETRO</p>
+   <div class="action">
+    <button id="powerButton" class="greenbtn" data-i18n="powerOn">⏻ NYALAKAN</button>
+    <button id="soundButton">SUARA: AKTIF</button>
+   </div>
+   <p class="center" id="powerStatus">STATUS SISTEM: MATI</p>
+  </div>
+ </div>
+</section>
+
+<section id="bootScreen" class="screen">
+ <div class="computer">
+  <div class="monitor" id="cinematicMonitor">
+   <div class="boot-chrome"><span>INTERNAL COMPUTER SYSTEMS</span><span>POST / BIOS v1.98</span></div>
+   <div class="language-control">
+    <label for="languageBoot" data-i18n="language">BAHASA</label>
+    <select id="languageBoot" class="language-select">
+     <option value="id">Bahasa Indonesia</option>
+     <option value="en">English</option>
+    </select>
+   </div>
+   <div class="cinema-center">
+    <div class="cinema-emblem" aria-hidden="true">IF<span>98</span></div>
+    <div class="cinema-brand">INTERNAL<strong>FORWARD</strong></div>
+    <div class="cinema-subtitle">PERSONAL COMMUNICATION PLATFORM</div>
+    <div class="cinema-divider"></div>
+    <h1 data-i18n="starting">MEMULAI SISTEM</h1>
+    <div id="bootLog" aria-live="polite"></div>
+    <div class="bar"><div id="progress"></div></div>
+    <p class="center" id="progressText">0%</p>
+    <div id="bootFinalMessage" class="cinema-final" aria-live="polite">SYSTEM READY · WELCOME BACK</div>
+   </div>
+   <div class="boot-footer"><span>POST · MEMORY · VIDEO · AUDIO</span><span>INTERNAL FORWARD OS</span></div>
+  </div>
+ </div>
+</section>
+
+<section id="authScreen" class="screen">
+ <div class="computer">
+  <div class="monitor">
+   <div class="brand">INTERNAL FORWARD OS</div>
+   <div class="language-control">
+    <label for="languageAuth" data-i18n="language">BAHASA</label>
+    <select id="languageAuth" class="language-select">
+     <option value="id">Bahasa Indonesia</option>
+     <option value="en">English</option>
+    </select>
+   </div>
+   <h1 data-i18n="authTitle">AUTENTIKASI PENGGUNA</h1>
+   <p class="center" data-i18n="authSubtitle">BUAT AKUN / MASUK</p>
+   <form id="authForm">
+    <label for="email" data-i18n="email">ALAMAT EMAIL</label>
+    <input class="field" id="email" type="email" autocomplete="email" required maxlength="200" placeholder="you@example.com">
+    <label for="password" data-i18n="password">KATA SANDI (MINIMAL 6 KARAKTER)</label>
+    <input class="field" id="password" type="password" autocomplete="current-password" minlength="6" required>
+    <div class="action">
+     <button class="greenbtn" type="submit" id="loginButton" data-i18n="login">MASUK</button>
+     <button type="button" id="registerButton" data-i18n="createAccount">BUAT AKUN</button>
+     <button type="button" id="guestButton" data-i18n="guestLogin">MASUK TAMU</button>
+    </div>
+   </form>
+   <p id="authStatus" class="note center" aria-live="polite">Login, buat akun, atau masuk sebagai tamu.</p>
+   <p id="error" role="alert"></p>
+  </div>
+ </div>
+</section>
+
+<section id="messengerApp">
+ <header class="topbar">
+  <span class="brandtitle">▣ INTERNAL MESSENGER 98</span>
+  <div class="tools">
+   <div class="language-control">
+    <label for="languageApp" data-i18n="language">BAHASA</label>
+    <select id="languageApp" class="language-select">
+     <option value="id">Bahasa Indonesia</option>
+     <option value="en">English</option>
+    </select>
+   </div>
+   <button id="featuresButton" type="button">FITUR-FITUR</button>
+   <button id="roomsButton" type="button" class="greenbtn">CHAT ROOM</button>
+   <button id="addFriendButton" type="button" data-i18n="addFriend">TAMBAH TEMAN</button>
+   <button id="requestsButton" type="button" data-i18n="requests">PERMINTAAN</button>
+   <button id="privacyButton" type="button" data-i18n="privacy">PRIVASI</button>
+   <select id="themeSelect" class="theme-select" aria-label="Theme">
+    <option value="green">CRT Green</option>
+    <option value="amber">Amber</option>
+    <option value="blue">Blue Monitor</option>
+    <option value="mono">Monochrome</option>
+   </select>
+   <select id="wallpaperSelect" class="wallpaper-select" aria-label="Wallpaper">
+    <option value="dots">Dots</option>
+    <option value="grid">Grid</option>
+    <option value="lines">Lines</option>
+    <option value="plain">Plain</option>
+   </select>
+   <div id="myAvatar" class="avatar my-avatar" aria-label="Foto profil saya">?</div>
+   <span id="currentDisplayName" class="user-label"></span>
+   <button id="viewMyProfileButton" type="button" data-i18n="viewProfile">LIHAT PROFIL</button>
+   <button id="editProfileButton" data-i18n="editProfile">EDIT PROFIL</button>
+   <button id="profilePhotoButton" data-i18n="profilePhoto">FOTO PROFIL</button>
+   <input type="file" id="profilePhotoInput" accept="image/*" aria-label="Pilih foto profil">
+   <button id="notificationsButton" data-i18n="enableNotifications">AKTIFKAN NOTIFIKASI</button>
+   <button id="logoutButton" data-i18n="logout">KELUAR</button>
+  </div>
+ </header>
+ <div class="desktop">
+  <aside class="sidebar">
+   <div class="sidehead">
+    <div class="sideheadline">
+     <strong data-i18n="contacts">TEMAN</strong>
+     <small id="onlineCount">0 online</small>
+    </div>
+    <input id="search" aria-label="Cari teman" placeholder="Cari teman..." data-i18n-placeholder="searchPlaceholder">
+   </div>
+   <div id="contactList"></div>
+  </aside>
+  <main class="chat">
+   <div class="chathead">
+    <div class="chat-title-area">
+     <strong id="chatHeader">LOBI INTERNAL</strong>
+     <div id="connection">MENGHUBUNGKAN...</div>
+     <div id="typingIndicator" aria-live="polite"></div>
+    </div>
+    <input id="messageSearch" type="search" placeholder="Cari pesan..." data-i18n-placeholder="searchMessages" aria-label="Cari pesan">
+    <div id="chatHeaderAvatar" class="avatar" hidden></div>
+    <button id="blockButton" type="button" hidden data-i18n="block">BLOKIR</button>
+    <button id="reportButton" type="button" hidden data-i18n="report">LAPORKAN</button>
+    <button id="viewContactProfileButton" type="button" hidden data-i18n="viewContactProfile">PROFIL TEMAN</button>
+    <button id="roomInfoButton" type="button" hidden>INFO ROOM</button>
+   </div>
+   <div id="messages" aria-live="polite"></div>
+   <div id="messageArea">
+    <div id="replyPreview" hidden>
+     <span id="replyPreviewText"></span>
+     <button id="cancelReplyButton" class="mini-btn" type="button">✕</button>
+    </div>
+    <div id="attachmentPreview" hidden>
+     <span id="attachmentPreviewName"></span>
+     <img id="attachmentPreviewImage" alt="Preview lampiran">
+     <button id="removeAttachmentButton" type="button" class="mini-btn">✕</button>
+    </div>
+    <div id="emojiPicker" hidden></div>
+    <form id="messageForm">
+     <button type="button" id="emojiButton" aria-label="Emoji">😊</button>
+     <button type="button" id="attachmentButton" aria-label="Lampirkan gambar">📎</button>
+     <input type="file" id="attachmentInput" accept="image/*,.gif">
+     <input id="messageInput" maxlength="2000" aria-label="Pesan" placeholder="Ketik pesan..." data-i18n-placeholder="messagePlaceholder" autocomplete="off">
+     <button id="sendButton" type="submit" data-i18n="send">KIRIM ▸</button>
+    </form>
+   </div>
+  </main>
+ </div>
+ <div id="profileStatus" aria-live="polite"></div>
+ <footer class="status">
+  <span id="userStatus">INTERNAL FORWARD OS · ONLINE</span>
+  <span id="unreadStatus"></span>
+ </footer>
+</section>
+
+<dialog id="profileDialog" class="modal">
+ <div class="modal-header" data-i18n="profileSettings">PENGATURAN PROFIL</div>
+ <form id="profileForm" class="modal-content">
+  <label for="displayNameInput" data-i18n="displayName">USERNAME / NAMA TAMPILAN</label>
+  <input id="displayNameInput" maxlength="32" minlength="2" required>
+  <p class="note" style="color:#444" data-i18n="displayNameNote">Pilih nama unik yang teman-temanmu dapat cari.</p>
+  <label for="personalStatusInput" data-i18n="personalStatus">STATUS PRIBADI</label>
+  <input id="personalStatusInput" maxlength="80" data-i18n-placeholder="personalStatusHint" placeholder="Apa kabar?">
+  <p class="note" style="color:#444">Maksimal 80 karakter.</p>
+  <div class="modal-actions">
+   <button type="button" id="cancelProfileButton" data-i18n="cancel">BATAL</button>
+   <button type="submit" class="greenbtn" data-i18n="save">SIMPAN</button>
+  </div>
+ </form>
+</dialog>
+
+<dialog id="profileViewerDialog" class="modal">
+ <div class="modal-header" id="profileViewerTitle">PROFIL PENGGUNA</div>
+ <div class="modal-content">
+  <div class="profile-viewer-head">
+   <div id="profileViewerAvatar" class="avatar profile-avatar-large" aria-label="Foto profil">?</div>
+  </div>
+  <h2 id="profileViewerName" class="profile-viewer-name">Pengguna</h2>
+  <p id="profileViewerUsername" class="profile-viewer-username">@pengguna</p>
+  <div class="profile-status-box">
+   <span class="profile-meta-label" data-i18n="personalStatus">STATUS PRIBADI</span>
+   <div id="profileViewerStatus">Belum mengatur status.</div>
+  </div>
+  <div class="profile-meta-grid">
+   <div class="profile-meta-box">
+    <span class="profile-meta-label" data-i18n="accountStatus">STATUS AKUN</span>
+    <strong id="profileViewerPresence" class="profile-meta-value">OFFLINE</strong>
+   </div>
+   <div class="profile-meta-box">
+    <span class="profile-meta-label" data-i18n="joinedDate">TANGGAL BERGABUNG</span>
+    <strong id="profileViewerJoined" class="profile-meta-value">Belum tercatat</strong>
+   </div>
+  </div>
+  <div class="modal-actions">
+   <button type="button" id="closeProfileViewerButton" data-i18n="close">TUTUP</button>
+  </div>
+ </div>
+</dialog>
+
+<dialog id="featuresDialog" class="modal">
+ <div class="modal-header" id="featuresTitle">FITUR-FITUR INTERNAL MESSENGER 98</div>
+ <div class="modal-content">
+  <ul id="featuresList" class="modal-list"></ul>
+  <p class="note" id="featuresNote" style="color:#444"></p>
+  <div class="modal-actions">
+   <button type="button" id="closeFeaturesButton">TUTUP</button>
+  </div>
+ </div>
+</dialog>
+
+<dialog id="requestsDialog" class="modal">
+ <div class="modal-header" id="requestsTitle">PERMINTAAN TEMAN</div>
+ <div class="modal-content">
+  <div id="requestsList"></div>
+  <div class="modal-actions">
+   <button type="button" id="closeRequestsButton" data-i18n="close">TUTUP</button>
+  </div>
+ </div>
+</dialog>
+
+
+<dialog id="roomsDialog" class="modal" style="width:min(680px,calc(100% - 22px))">
+ <div class="modal-header">INTERNAL MESSENGER 98 · CHAT ROOM DIRECTORY</div>
+ <div class="modal-content">
+  <p class="room-help">Buat ruang publik atau privat. Ruang publik bisa ditemukan semua pengguna yang login. Ruang privat hanya terlihat oleh anggota yang diundang.</p>
+  <div id="roomsStatus" class="note" style="color:#444;margin:8px 0" aria-live="polite">Memuat daftar room...</div>
+  <div id="roomsList" class="room-dialog-list"></div>
+  <form id="createRoomForm" class="room-form-grid">
+   <h3 style="margin:8px 0 0">BUAT ROOM BARU</h3>
+   <label for="roomNameInput">NAMA ROOM (3–36 KARAKTER)
+    <input id="roomNameInput" minlength="3" maxlength="36" required placeholder="Contoh: Retro Gamers">
+   </label>
+   <label for="roomDescriptionInput">DESKRIPSI (OPSIONAL)
+    <textarea id="roomDescriptionInput" maxlength="120" rows="2" placeholder="Tentang ruang ini..."></textarea>
+   </label>
+   <label for="roomVisibilityInput">JENIS ROOM
+    <select id="roomVisibilityInput">
+     <option value="public">PUBLIC ROOM — bisa ditemukan semua pengguna</option>
+     <option value="private">PRIVATE ROOM — perlu undangan</option>
+    </select>
+   </label>
+   <p class="room-help">Kamu otomatis menjadi pemilik dan anggota pertama room. Untuk room privat, undang teman melalui menu INFO ROOM setelah dibuat.</p>
+   <div class="modal-actions">
+    <button id="closeRoomsButton" type="button">TUTUP</button>
+    <button id="createRoomButton" type="submit" class="greenbtn">BUAT ROOM</button>
+   </div>
+  </form>
+ </div>
+</dialog>
+
+<dialog id="roomDetailsDialog" class="modal">
+ <div class="modal-header" id="roomDetailsTitle">INFO ROOM</div>
+ <div class="modal-content">
+  <p id="roomDetailsDescription" class="room-help"></p>
+  <p id="roomDetailsMeta" class="room-help"></p>
+  <strong>ANGGOTA ROOM</strong>
+  <div id="roomMembersList" class="room-dialog-list" style="margin-top:8px"></div>
+  <form id="roomInviteForm" class="room-form-grid" hidden>
+   <label for="roomInviteUsername">UNDANG TEMAN BERDASARKAN USERNAME
+    <input id="roomInviteUsername" maxlength="32" placeholder="username teman">
+   </label>
+   <p class="room-help">Hanya pemilik room yang dapat mengundang teman. Pengguna harus sudah menjadi temanmu.</p>
+   <div class="modal-actions"><button class="greenbtn" type="submit">UNDANG TEMAN</button></div>
+  </form>
+  <div class="modal-actions"><button id="closeRoomDetailsButton" type="button">TUTUP</button></div>
+ </div>
+</dialog>
+
+<dialog id="privacyDialog" class="modal">
+ <div class="modal-header" id="privacyTitle">PENGATURAN PRIVASI</div>
+ <div class="modal-content">
+  <p id="privacyIntro" class="note" style="color:#444"></p>
+  <div id="blockedList"></div>
+  <div class="modal-actions">
+   <button type="button" id="closePrivacyButton" data-i18n="close">TUTUP</button>
+  </div>
+ </div>
+</dialog>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+import {getAuth,createUserWithEmailAndPassword,signInWithEmailAndPassword,signInAnonymously,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+import {getFirestore,collection,addDoc,query,where,orderBy,limit,doc,getDoc,setDoc,updateDoc,deleteDoc,onSnapshot,serverTimestamp,arrayUnion} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-firestore.js";
+import {getDatabase,ref as rtdbRef,onValue,onDisconnect,set as rtdbSet,serverTimestamp as rtdbServerTimestamp} from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+const firebaseConfig={
+ apiKey:"AIzaSyDL7BE9y5tkI0itVZTIPmfXDspnFcST2r0",
+ authDomain:"internal-forward-messenger.firebaseapp.com",
+ databaseURL:"https://internal-forward-messenger-default-rtdb.firebaseio.com/",
+ projectId:"internal-forward-messenger",
+ storageBucket:"internal-forward-messenger.firebasestorage.app",
+ messagingSenderId:"862925190925",
+ appId:"1:862925190925:web:2aebdb5c99f1f82c686244",
+ measurementId:"G-M713SY2GRD"
+};
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const rtdb=getDatabase(app);
+const $=id=>document.getElementById(id);
+
+const words={
+id:{
+language:"BAHASA",modelCaption:"MODEL 1998 · KOMPUTER PRIBADI",terminalCaption:"TERMINAL KOMUNIKASI RETRO",powerOn:"⏻ NYALAKAN",soundOn:"SUARA: AKTIF",soundOff:"SUARA: MATI",systemOff:"STATUS SISTEM: MATI",systemOn:"STATUS SISTEM: MENYALA",starting:"MEMULAI SISTEM",authTitle:"AUTENTIKASI PENGGUNA",authSubtitle:"BUAT AKUN / MASUK",email:"ALAMAT EMAIL",password:"KATA SANDI (MINIMAL 6 KARAKTER)",login:"MASUK",createAccount:"BUAT AKUN",guestLogin:"MASUK TAMU",authPrompt:"Login, buat akun, atau masuk sebagai tamu.",loginProgress:"Sedang masuk...",loginFail:"Login gagal.",createProgress:"Membuat akun...",createFail:"Pembuatan akun gagal.",guestProgress:"Memulai sesi tamu...",guestFail:"Login tamu gagal.",editProfile:"EDIT PROFIL",profilePhoto:"FOTO PROFIL",viewProfile:"LIHAT PROFIL",viewContactProfile:"PROFIL TEMAN",personalStatus:"STATUS PRIBADI",personalStatusHint:"Tulis status singkat (maksimal 80 karakter).",accountStatus:"STATUS AKUN",profileOnline:"ONLINE",profileOffline:"OFFLINE",profileNoStatus:"Belum mengatur status.",joinedDate:"TANGGAL BERGABUNG",joinedUnknown:"Tanggal bergabung belum tercatat",profileOf:"PROFIL PENGGUNA",profileSelf:"PROFIL SAYA",enableNotifications:"AKTIFKAN NOTIFIKASI",notificationsOn:"NOTIFIKASI AKTIF",logout:"KELUAR",contacts:"TEMAN",searchPlaceholder:"Cari teman...",searchMessages:"Cari pesan yang dimuat...",internalLobby:"LOBI INTERNAL",connecting:"MENGHUBUNGKAN...",connectingFirebase:"MENGHUBUNGKAN KE FIREBASE...",connected:"● TERHUBUNG · CHAT REAL-TIME",connectionError:"KESALAHAN KONEKSI",messageNotSent:"PESAN TIDAK TERKIRIM",send:"KIRIM ▸",profileSettings:"PENGATURAN PROFIL",displayName:"USERNAME / NAMA TAMPILAN",displayNameNote:"Pilih nama unik yang teman-temanmu dapat cari.",cancel:"BATAL",save:"SIMPAN",close:"TUTUP",online:"online",offline:"offline",typing:"sedang mengetik…",photoProgress:"Memproses foto profil…",photoSaved:"Foto profil tersimpan.",photoFail:"Foto profil gagal disimpan.",photoNeedLogin:"Login terlebih dahulu untuk memasang foto profil.",badImage:"Pilih file gambar.",bigImage:"Gambar maksimal 240 KB (GIF) atau gunakan gambar JPG/PNG yang lebih kecil.",imageProcess:"Browser tidak bisa memproses gambar ini.",imageOpen:"Gambar tidak bisa dibuka.",imageCompress:"Gambar terlalu besar setelah diperkecil. Coba gambar lain.",emailExists:"Email sudah terdaftar. Coba login.",invalidEmail:"Format email tidak valid.",weakPassword:"Kata sandi minimal 6 karakter.",badCredentials:"Email atau kata sandi salah.",tooMany:"Terlalu banyak percobaan. Coba lagi nanti.",anonDisabled:"Guest Login belum diaktifkan di Firebase Authentication.",permission:"Akses ditolak. Periksa Firestore Rules.",unavailable:"Server tidak tersedia. Periksa internet.",genericError:"Terjadi kesalahan.",photoError:"Gagal menyimpan foto: {error}",translate:"TERJEMAHKAN",translated:"Terjemahan",translateConsent:"Teks akan dikirim ke layanan terjemahan MyMemory. Lanjutkan?",translateError:"Terjemahan gagal.",translateTooLong:"Pesan terlalu panjang untuk diterjemahkan (maksimal 500 byte).",translationSource:"Terjemahan otomatis mungkin tidak akurat.",translationBusy:"MENERJEMAHKAN...",lobby:"LOBI",privatePrefix:"CHAT: ",guest:"Tamu",typingLabel:"sedang mengetik…",unread:"belum dibaca",noMessages:"Belum ada pesan.",newMessage:"Pesan baru",notificationBody:"Pesan baru di INTERNAL MESSENGER 98",bootBios:"BIOS INTERNAL VERSI 1.98",bootMem:"Tes memori ........ OK",bootFiles:"Memuat berkas sistem ........ OK",bootAudio:"Menyiapkan audio ........ OK",bootFirebase:"Menghubungkan ke Firebase .......",bootOS:"Memulai INTERNAL FORWARD OS...",presenceCount:"{n} online",emojiTitle:"Pilih emoji",themeGreen:"CRT Hijau",themeAmber:"Terminal Amber",themeBlue:"Monitor Biru",themeMono:"Monokrom",reply:"BALAS",edit:"EDIT",delete:"HAPUS",read:"DIBACA",sent:"TERKIRIM",edited:"diedit",addFriend:"TAMBAH TEMAN",requests:"PERMINTAAN",privacy:"PRIVASI",block:"BLOKIR",unblock:"BUKA BLOKIR",report:"LAPORKAN",usernamePrompt:"Masukkan username teman:",userNotFound:"Username tidak ditemukan.",selfAdd:"Kamu tidak dapat menambahkan diri sendiri.",requestSent:"Permintaan teman terkirim.",alreadyFriends:"Kalian sudah berteman.",pendingRequest:"Permintaan teman sudah ada.",incomingRequests:"PERMINTAAN MASUK",outgoingRequests:"PERMINTAAN TERKIRIM",accept:"TERIMA",decline:"TOLAK",pending:"MENUNGGU",accepted:"DITERIMA",declined:"DITOLAK",noRequests:"Belum ada permintaan teman.",noFriends:"Belum ada teman. Tekan TAMBAH TEMAN dan cari username.",profileNamePrompt:"Masukkan username",blockConfirm:"Blokir pengguna ini? Mereka tidak bisa memulai chat pribadi denganmu.",reportPrompt:"Jelaskan alasan laporan:",reportSent:"Laporan terkirim. Terima kasih.",blockedEmpty:"Tidak ada akun yang kamu blokir.",blockedNote:"Akun yang diblokir tidak dapat memulai percakapan pribadi denganmu.",searchEmpty:"Tidak ada pesan yang cocok.",replyingTo:"Membalas",replyPlaceholder:"Balasan untuk: {name}",editPrompt:"Edit teks pesan:",deleteConfirm:"Hapus pesan ini?",messagePlaceholder:"Ketik pesan...",attach:"LAMPIRKAN FOTO/GIF",attachmentReady:"Lampiran siap",removeAttachment:"Hapus lampiran",wallpaper:"Wallpaper",featuresTitle:"FITUR-FITUR INTERNAL MESSENGER 98",featuresNote:"Beberapa fitur memerlukan Firebase Rules yang sesuai.",noTranslation:"Terjemahan tidak ditemukan."},
+en:{
+language:"LANGUAGE",modelCaption:"MODEL 1998 · PERSONAL COMPUTER",terminalCaption:"RETRO COMMUNICATION TERMINAL",powerOn:"⏻ POWER ON",soundOn:"SOUND: ON",soundOff:"SOUND: OFF",systemOff:"SYSTEM POWER: OFF",systemOn:"SYSTEM POWER: ON",starting:"STARTING SYSTEM",authTitle:"USER AUTHENTICATION",authSubtitle:"CREATE ACCOUNT / LOG IN",email:"EMAIL ADDRESS",password:"PASSWORD (MINIMUM 6 CHARACTERS)",login:"LOG IN",createAccount:"CREATE ACCOUNT",guestLogin:"GUEST LOGIN",authPrompt:"Log in, create an account, or continue as a guest.",loginProgress:"Logging in...",loginFail:"Login failed.",createProgress:"Creating account...",createFail:"Account creation failed.",guestProgress:"Starting guest session...",guestFail:"Guest login failed.",editProfile:"EDIT PROFILE",profilePhoto:"PROFILE PHOTO",viewProfile:"VIEW PROFILE",viewContactProfile:"FRIEND PROFILE",personalStatus:"PERSONAL STATUS",personalStatusHint:"Write a short status (up to 80 characters).",accountStatus:"ACCOUNT STATUS",profileOnline:"ONLINE",profileOffline:"OFFLINE",profileNoStatus:"No status set.",joinedDate:"JOINED",joinedUnknown:"Join date not recorded",profileOf:"USER PROFILE",profileSelf:"MY PROFILE",enableNotifications:"ENABLE NOTIFICATIONS",notificationsOn:"NOTIFICATIONS ON",logout:"LOG OUT",contacts:"FRIENDS",searchPlaceholder:"Search friends...",searchMessages:"Search loaded messages...",internalLobby:"INTERNAL LOBBY",connecting:"CONNECTING...",connectingFirebase:"CONNECTING TO FIREBASE...",connected:"● CONNECTED · REAL-TIME CHAT",connectionError:"CONNECTION ERROR",messageNotSent:"MESSAGE NOT SENT",send:"SEND ▸",profileSettings:"PROFILE SETTINGS",displayName:"USERNAME / DISPLAY NAME",displayNameNote:"Choose a name your friends can search for.",cancel:"CANCEL",save:"SAVE",close:"CLOSE",online:"online",offline:"offline",typing:"is typing…",photoProgress:"Processing profile photo…",photoSaved:"Profile photo saved.",photoFail:"Profile photo could not be saved.",photoNeedLogin:"Please log in before setting a profile photo.",badImage:"Choose an image file.",bigImage:"GIFs must be 240 KB or smaller; use a smaller JPG/PNG for larger images.",imageProcess:"This browser could not process the image.",imageOpen:"The image could not be opened.",imageCompress:"Image is still too large. Try another image.",emailExists:"This email is already registered.",invalidEmail:"Email format is invalid.",weakPassword:"Password must be at least 6 characters.",badCredentials:"Incorrect email or password.",tooMany:"Too many attempts. Try later.",anonDisabled:"Guest Login is not enabled in Firebase Authentication.",permission:"Access denied. Check Firestore Rules.",unavailable:"Server unavailable. Check internet.",genericError:"Something went wrong.",photoError:"Could not save photo: {error}",translate:"TRANSLATE",translated:"Translation",translateConsent:"The text will be sent to the MyMemory translation service. Continue?",translateError:"Translation failed.",translateTooLong:"Message is too long to translate (max 500 bytes).",translationSource:"Machine translation may not be accurate.",translationBusy:"TRANSLATING...",lobby:"LOBBY",privatePrefix:"CHAT: ",guest:"Guest",typingLabel:"is typing…",unread:"unread",noMessages:"No messages yet.",newMessage:"New message",notificationBody:"New message in INTERNAL MESSENGER 98",bootBios:"INTERNAL BIOS VERSION 1.98",bootMem:"Memory test ........ OK",bootFiles:"Loading system files ........ OK",bootAudio:"Initializing audio ........ OK",bootFirebase:"Connecting to Firebase .......",bootOS:"Starting INTERNAL FORWARD OS...",presenceCount:"{n} online",emojiTitle:"Choose emoji",themeGreen:"CRT Green",themeAmber:"Amber Terminal",themeBlue:"Blue Monitor",themeMono:"Monochrome",reply:"REPLY",edit:"EDIT",delete:"DELETE",read:"READ",sent:"SENT",edited:"edited",addFriend:"ADD FRIEND",requests:"REQUESTS",privacy:"PRIVACY",block:"BLOCK",unblock:"UNBLOCK",report:"REPORT",usernamePrompt:"Enter your friend's username:",userNotFound:"Username not found.",selfAdd:"You cannot add yourself.",requestSent:"Friend request sent.",alreadyFriends:"You are already friends.",pendingRequest:"A friend request already exists.",incomingRequests:"INCOMING REQUESTS",outgoingRequests:"SENT REQUESTS",accept:"ACCEPT",decline:"DECLINE",pending:"PENDING",accepted:"ACCEPTED",declined:"DECLINED",noRequests:"No friend requests yet.",noFriends:"No friends yet. Press ADD FRIEND and search a username.",profileNamePrompt:"Enter a username",blockConfirm:"Block this user? They will not be able to start a private chat with you.",reportPrompt:"Describe why you are reporting this account:",reportSent:"Report submitted. Thank you.",blockedEmpty:"You have not blocked anyone.",blockedNote:"Blocked accounts cannot start private conversations with you.",searchEmpty:"No matching messages.",replyingTo:"Replying to",replyPlaceholder:"Reply to: {name}",editPrompt:"Edit message text:",deleteConfirm:"Delete this message?",messagePlaceholder:"Type a message...",attach:"ATTACH IMAGE/GIF",attachmentReady:"Attachment ready",removeAttachment:"Remove attachment",wallpaper:"Wallpaper",featuresTitle:"INTERNAL MESSENGER 98 FEATURES",featuresNote:"Some features need matching Firebase Rules.",noTranslation:"No translation returned."}
+};
+
+let stopRtdbConnected=null,stopRtdbStatuses=null;
+const realtimePresence=new Map();
+let language="id",soundOn=true,audioContext,currentUser=null,selectedChat={type:"lobby",key:"lobby",id:"general",name:"INTERNAL LOBBY"},busy=false,stopMessages=null,stopProfiles=null,stopTyping=null,stopIncomingRequests=null,stopOutgoingRequests=null,stopBlocks=null,stopPublicRooms=null,stopMemberRooms=null,presenceTimer=null,typingTimer=null,lastTypingWrite=0,latestMessages=[],allProfiles=[],profileCache=new Map(),reactionCache=new Map(),reactionUnsubs=new Map(),friendRequestsIn=[],friendRequestsOut=[],friendUids=new Set(),blockedUids=new Set(),unreadCounts=new Map(),publicRoomMap=new Map(),memberRoomMap=new Map(),roomItems=[],pendingReply=null,pendingImageData=null,pendingFileName="",currentErrorCode="",authStatusKey="authPrompt",connectionKey="connecting",powerStatusKey="systemOff",profileStatusText="",typingStatus="",hasPoweredOn=false;
+const EMOJIS=["😀","😂","🥹","😍","😎","🤔","😭","😮","🥳","😴","👍","👎","❤️","🔥","🎉","🙏","💯","✨","👋","💻","👀","✅","💚","🙌","🌈","⭐","🥰","🤝"];
+const REACTIONS=["👍","❤️","😂","😮","😢","🎉"];
+const t=(key,values={})=>(words[language]?.[key]||words.en[key]||key).replace(/\{(\w+)\}/g,(_,k)=>values[k]??"");
+const profileDoc=uid=>doc(db,"profiles",uid);
+const defaultName=user=>user?.isAnonymous?"Guest-"+(user.uid||"guest").slice(0,6).toUpperCase():((user?.email||"Member").split("@")[0].slice(0,24)||"Member");
+const friendRequestId=(from,to)=>from+"__"+to;
+const convId=(a,b)=>[a,b].sort().join("__");
+const segments=()=>selectedChat.type==="lobby"?["chats","general","messages"]:selectedChat.type==="room"?["chatRooms",selectedChat.id,"messages"]:["conversations",selectedChat.id,"messages"];
+const typingSegments=()=>selectedChat.type==="lobby"?["chats","general","typing"]:selectedChat.type==="room"?["chatRooms",selectedChat.id,"typing"]:["conversations",selectedChat.id,"typing"];
+const chatKey=()=>selectedChat.type==="lobby"?"lobby":selectedChat.type==="room"?"room:"+selectedChat.id:"dm:"+selectedChat.userId;
+
+function setAuthStatus(k){authStatusKey=k;$("authStatus").textContent=t(k)}
+function setConnection(k){connectionKey=k;$("connection").textContent=t(k)}
+function setPowerStatus(k){powerStatusKey=k;$("powerStatus").textContent=t(k)}
+function setProfileStatus(s){profileStatusText=s;$("profileStatus").textContent=s}
+function showScreen(id){["powerScreen","bootScreen","authScreen","messengerApp"].forEach(x=>$(x).style.display=x===id?"flex":"none")}
+function beep(f=440,d=.1){if(!soundOn)return;try{audioContext ||=new(window.AudioContext||window.webkitAudioContext)();if(audioContext.state==="suspended")audioContext.resume();const o=audioContext.createOscillator(),g=audioContext.createGain();o.type="square";o.frequency.value=f;g.gain.setValueAtTime(.03,audioContext.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+d);o.connect(g);g.connect(audioContext.destination);o.start();o.stop(audioContext.currentTime+d)}catch{}}
+function errorText(e){const map={"auth/email-already-in-use":"emailExists","auth/invalid-email":"invalidEmail","auth/weak-password":"weakPassword","auth/invalid-credential":"badCredentials","auth/wrong-password":"badCredentials","auth/user-not-found":"badCredentials","auth/too-many-requests":"tooMany","auth/operation-not-allowed":"anonDisabled","permission-denied":"permission","unavailable":"unavailable"};return t(map[e.code]||"genericError")+(map[e.code]?"":"\n"+(e.message||""))}
+function showError(e){currentErrorCode=e?.code||"";$("error").textContent=errorText(e)}
+function clearError(){$("error").textContent="";currentErrorCode=""}
+function defaultProfile(user){return {displayName:defaultName(user),usernameLower:defaultName(user).toLowerCase(),isOnline:true,lastSeen:serverTimestamp(),updatedAt:serverTimestamp()}}
+function isOnline(p){if(realtimePresence.has(p.uid))return realtimePresence.get(p.uid)?.state==="online";const ts=p.lastSeen?.toMillis?.();return !!p.isOnline&&!!ts&&Date.now()-ts<90000}
+function profileOf(uid){return profileCache.get(uid)||allProfiles.find(p=>p.uid===uid)||{uid,displayName:"Guest"}}
+function setAvatar(el,uid,email,photoData,name){el.replaceChildren();if(photoData){const img=document.createElement("img");img.src=photoData;img.alt=t("profilePhoto");el.appendChild(img)}else el.textContent=(name||email?.split("@")[0]||"G").trim().slice(0,1).toUpperCase()||"?"}
+function updateOwnAvatar(){if(!currentUser)return;const p=profileOf(currentUser.uid);setAvatar($("myAvatar"),currentUser.uid,currentUser.email,p.photoData,p.displayName)}
+function updateUserStatus(){if(!currentUser){$("userStatus").textContent="INTERNAL FORWARD OS · ONLINE";$("currentDisplayName").textContent="";return}const p=profileOf(currentUser.uid);$("currentDisplayName").textContent=p.displayName||defaultName(currentUser);$("userStatus").textContent=(currentUser.isAnonymous?"GUEST: ":language==="id"?"MASUK: ":"SIGNED IN: ")+(p.displayName||defaultName(currentUser))}
+function updateOnlineCount(){$("onlineCount").textContent=t("presenceCount",{n:allProfiles.filter(p=>p.uid!==currentUser?.uid&&isOnline(p)).length})}
+function updateUnreadStatus(){const n=[...unreadCounts.values()].reduce((a,b)=>a+b,0);$("unreadStatus").textContent=n?n+" "+t("unread"):""}
+function applyLanguage(){document.documentElement.lang=language;document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=t(el.dataset.i18n));document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>el.placeholder=t(el.dataset.i18nPlaceholder));document.querySelectorAll(".language-select").forEach(el=>el.value=language);$("soundButton").textContent=t(soundOn?"soundOn":"soundOff");setPowerStatus(powerStatusKey);setAuthStatus(authStatusKey);setConnection(connectionKey);$("profileStatus").textContent=profileStatusText;$("typingIndicator").textContent=typingStatus;$("notificationsButton").textContent=("Notification" in window&&Notification.permission==="granted")?t("notificationsOn"):t("enableNotifications");$("themeSelect").options[0].text=t("themeGreen");$("themeSelect").options[1].text=t("themeAmber");$("themeSelect").options[2].text=t("themeBlue");$("themeSelect").options[3].text=t("themeMono");$("search").setAttribute("aria-label",t("searchPlaceholder"));$("messageSearch").setAttribute("aria-label",t("searchMessages"));$("messageInput").setAttribute("aria-label",t("messagePlaceholder"));$("profilePhotoInput").setAttribute("aria-label",t("profilePhoto"));renderFeatures();renderContacts();renderMessages();updateUserStatus()}
+
+let cinematicBootRunning=false;
+const featureItems={id:["Balas pesan dengan kutipan","Lampirkan gambar dan GIF kecil; kirim stiker emoji","Cari pesan dari 100 pesan terakhir yang dimuat","Edit atau hapus pesan milik sendiri","Tanda pesan dibaca","Blokir dan laporkan pengguna","Tema warna dan wallpaper chat","Tambah teman dengan username","Profil retro: foto, username unik, status pribadi, dan tanggal bergabung","Chat room publik dan privat dengan daftar anggota"],en:["Reply to a message with a quote","Attach images and small GIFs; send emoji stickers","Search the last 100 loaded messages","Edit or delete your own messages","Read receipts","Block and report users","Chat colors and wallpaper","Add friends by username","Retro profile: photo, unique username, personal status, and join date","Public and private chat rooms with member lists"]};
+function renderFeatures(){$("featuresTitle").textContent=t("featuresTitle");$("featuresButton").textContent=language==="id"?"FITUR-FITUR":"FEATURES";$("closeFeaturesButton").textContent=t("close");$("featuresNote").textContent=t("featuresNote");const ul=$("featuresList");ul.replaceChildren();featureItems[language].forEach(s=>{const li=document.createElement("li");li.textContent=s;ul.appendChild(li)})}
+$("featuresButton").onclick=()=>{$("featuresDialog").showModal();renderFeatures()};
+$("closeFeaturesButton").onclick=()=>$("featuresDialog").close();
+
+document.querySelectorAll(".language-select").forEach(el=>el.addEventListener("change",()=>{language=el.value==="en"?"en":"id";try{localStorage.setItem("im98-language",language)}catch{}applyLanguage()}));
+try{
+ const s=localStorage.getItem("im98-language");
+ if(s==="id"||s==="en")language=s;
+ const th=localStorage.getItem("im98-theme");
+ if(["green","amber","blue","mono"].includes(th)){$("themeSelect").value=th;document.body.classList.add("body-"+th);document.body.classList.remove("body-green")}
+ const wp=localStorage.getItem("im98-wallpaper");
+ if(["dots","grid","lines","plain"].includes(wp)){$("wallpaperSelect").value=wp;document.body.classList.add("wallpaper-"+wp)}
+}catch{}
+$("themeSelect").addEventListener("change",()=>{document.body.classList.remove("body-amber","body-blue","body-mono");if($("themeSelect").value!=="green")document.body.classList.add("body-"+$("themeSelect").value);try{localStorage.setItem("im98-theme",$("themeSelect").value)}catch{}beep(400,.05)});
+$("wallpaperSelect").addEventListener("change",()=>{document.body.classList.remove("wallpaper-dots","wallpaper-grid","wallpaper-lines","wallpaper-plain");document.body.classList.add("wallpaper-"+$("wallpaperSelect").value);try{localStorage.setItem("im98-wallpaper",$("wallpaperSelect").value)}catch{}});
+$("soundButton").onclick=()=>{soundOn=!soundOn;$("soundButton").textContent=t(soundOn?"soundOn":"soundOff");if(soundOn)beep(650,.1)};
+$("powerButton").onclick=async()=>{
+ const b=$("powerButton");
+ if(b.disabled)return;
+ b.disabled=true;
+ cinematicBootRunning=true;
+ showScreen("bootScreen");
+ const boot=$("bootScreen"),log=$("bootLog"),progress=$("progress"),progressText=$("progressText"),finalMessage=$("bootFinalMessage");
+ boot.classList.remove("boot-complete");
+ log.replaceChildren();progress.style.width="0%";progressText.textContent="0%";finalMessage.classList.remove("ready");
+ finalMessage.textContent=language==="id"?"MENYIAPKAN RUANG DIGITALMU...":"PREPARING YOUR DIGITAL WORLD...";
+ await new Promise(r=>setTimeout(r,430));
+ const stages=[
+  {key:"bootBios",pct:12,f:320},
+  {key:"bootMem",pct:26,f:390},
+  {key:"bootFiles",pct:43,f:430},
+  {key:"bootAudio",pct:59,f:410},
+  {key:"bootFirebase",pct:78,f:560},
+  {key:"bootOS",pct:100,f:540}
+ ];
+ for(let i=0;i<stages.length;i++){
+  const stage=stages[i],line=document.createElement("div");
+  line.className="bootline";line.textContent=t(stage.key);log.appendChild(line);
+  progress.style.width=stage.pct+"%";progressText.textContent=stage.pct+"%";
+  beep(320+i*72,.075);
+  await new Promise(r=>setTimeout(r,stage.f));
+ }
+ finalMessage.textContent=language==="id"?"SISTEM SIAP · SELAMAT DATANG":"SYSTEM READY · WELCOME BACK";
+ finalMessage.classList.add("ready");boot.classList.add("boot-complete");
+ beep(720,.12);await new Promise(r=>setTimeout(r,150));beep(960,.18);
+ await new Promise(r=>setTimeout(r,820));
+ cinematicBootRunning=false;hasPoweredOn=true;showScreen(currentUser?"messengerApp":"authScreen");setPowerStatus("systemOn");setAuthStatus("authPrompt");b.disabled=false;
+};
+
+$("authForm").addEventListener("submit",async e=>{e.preventDefault();if(busy)return;busy=true;clearError();setAuthStatus("loginProgress");for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=true;try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(error){showError(error);setAuthStatus("loginFail")}finally{busy=false;for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=false}});
+$("registerButton").onclick=async()=>{if(busy||!$("authForm").reportValidity())return;busy=true;clearError();setAuthStatus("createProgress");for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=true;try{await createUserWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(error){showError(error);setAuthStatus("createFail")}finally{busy=false;for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=false}};
+$("guestButton").onclick=async()=>{if(busy)return;busy=true;clearError();setAuthStatus("guestProgress");for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=true;try{await signInAnonymously(auth)}catch(error){showError(error);setAuthStatus("guestFail")}finally{busy=false;for(const id of ["loginButton","registerButton","guestButton"])$(id).disabled=false}};
+
+async function ensureProfile(user){const ref=profileDoc(user.uid),snap=await getDoc(ref);if(!snap.exists()){const name=defaultName(user);await setDoc(ref,{...defaultProfile(user),displayName:name,usernameLower:name.toLowerCase(),personalStatus:"",joinedAt:serverTimestamp()})}else{const old=snap.data(),name=(typeof old.displayName==="string"&&old.displayName.trim().length>=2)?old.displayName:defaultName(user);const patch={displayName:name,usernameLower:name.toLowerCase(),isOnline:true,lastSeen:serverTimestamp(),updatedAt:serverTimestamp()};if(typeof old.personalStatus!=="string")patch.personalStatus="";await setDoc(ref,patch,{merge:true})}}
+async function pulsePresence(){if(!currentUser)return;try{await setDoc(profileDoc(currentUser.uid),{isOnline:true,lastSeen:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn("Presence update",e)}}
+async function setOffline(){if(!currentUser)return;try{await setDoc(profileDoc(currentUser.uid),{isOnline:false,lastSeen:serverTimestamp(),updatedAt:serverTimestamp()},{merge:true})}catch{}}
+
+// Realtime Database presence: onDisconnect marks a user offline if their connection drops.
+function startRealtimePresence(user){
+ if(stopRtdbConnected)stopRtdbConnected();
+ if(stopRtdbStatuses)stopRtdbStatuses();
+ const connectedRef=rtdbRef(rtdb,".info/connected");
+ const ownStatusRef=rtdbRef(rtdb,"status/"+user.uid);
+ stopRtdbConnected=onValue(connectedRef,async snapshot=>{
+  if(auth.currentUser?.uid!==user.uid||snapshot.val()!==true)return;
+  try{
+   await onDisconnect(ownStatusRef).set({state:"offline",lastChanged:rtdbServerTimestamp()});
+   if(auth.currentUser?.uid===user.uid){
+    await rtdbSet(ownStatusRef,{state:"online",lastChanged:rtdbServerTimestamp()});
+    await pulsePresence();
+   }
+  }catch(error){console.warn("Realtime presence setup failed. Check Realtime Database Rules.",error)}
+ },error=>console.warn("Realtime Database connection listener:",error));
+ stopRtdbStatuses=onValue(rtdbRef(rtdb,"status"),snapshot=>{
+  realtimePresence.clear();
+  const statuses=snapshot.val()||{};
+  Object.entries(statuses).forEach(([uid,status])=>realtimePresence.set(uid,status||{}));
+  updateOnlineCount();renderContacts();
+ },error=>console.warn("Realtime Database status listener:",error));
+}
+async function setRealtimeOffline(){
+ if(!currentUser)return;
+ try{await rtdbSet(rtdbRef(rtdb,"status/"+currentUser.uid),{state:"offline",lastChanged:rtdbServerTimestamp()})}catch(error){console.warn("Could not set realtime status offline:",error)}
+}
+window.addEventListener("pagehide",()=>setOffline());
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)pulsePresence()});
+function stopAllReactions(){for(const unsub of reactionUnsubs.values())unsub();reactionUnsubs.clear();reactionCache.clear()}
+function stopActiveChat(){if(stopMessages)stopMessages();if(stopTyping)stopTyping();stopMessages=null;stopTyping=null;stopAllReactions();latestMessages=[];$("typingIndicator").textContent="";typingStatus="";$("messages").replaceChildren();clearTimeout(typingTimer);clearReply()}
+function currentSegments(){return selectedChat.type==="lobby"?["chats","general","messages"]:selectedChat.type==="room"?["chatRooms",selectedChat.id,"messages"]:["conversations",selectedChat.id,"messages"]}
+function currentTyping(){return selectedChat.type==="lobby"?["chats","general","typing"]:selectedChat.type==="room"?["chatRooms",selectedChat.id,"typing"]:["conversations",selectedChat.id,"typing"]}
+function setChatHeader(){const isPrivate=selectedChat.type==="private",isRoom=selectedChat.type==="room";$("chatHeader").textContent=isPrivate?t("privatePrefix")+profileOf(selectedChat.userId).displayName:isRoom?"# "+(selectedChat.name||"CHAT ROOM"):t("internalLobby");$("chatHeaderAvatar").hidden=!isPrivate;$("blockButton").hidden=!isPrivate;$("reportButton").hidden=!isPrivate;$("viewContactProfileButton").hidden=!isPrivate;$("roomInfoButton").hidden=!isRoom;if(isPrivate){const p=profileOf(selectedChat.userId);setAvatar($("chatHeaderAvatar"),p.uid,p.email,p.photoData,p.displayName);$("blockButton").textContent=blockedUids.has(p.uid)?t("unblock"):t("block")}}
+
+function syncRoomItems(){
+ const merged=new Map([...publicRoomMap.entries(),...memberRoomMap.entries()]);
+ roomItems=[...merged.values()].sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+ renderContacts();renderRoomsList();
+}
+function listenRooms(){
+ if(stopPublicRooms)stopPublicRooms();if(stopMemberRooms)stopMemberRooms();
+ publicRoomMap.clear();memberRoomMap.clear();roomItems=[];
+ if(!currentUser){syncRoomItems();return}
+ const publicQ=query(collection(db,"chatRooms"),where("isPublic","==",true));
+ const memberQ=query(collection(db,"chatRooms"),where("members","array-contains",currentUser.uid));
+ stopPublicRooms=onSnapshot(publicQ,snap=>{publicRoomMap.clear();snap.docs.forEach(d=>publicRoomMap.set(d.id,{id:d.id,...d.data()}));syncRoomItems()},error=>{console.warn("Public rooms listener",error);$("roomsStatus").textContent="Tidak dapat memuat room publik. Periksa Firestore Rules."});
+ stopMemberRooms=onSnapshot(memberQ,snap=>{memberRoomMap.clear();snap.docs.forEach(d=>memberRoomMap.set(d.id,{id:d.id,...d.data()}));syncRoomItems()},error=>{console.warn("Member rooms listener",error);$("roomsStatus").textContent="Tidak dapat memuat room anggota. Periksa Firestore Rules."});
+}
+function visibleRoomItems(){return roomItems.filter(r=>r.isPublic===true||(Array.isArray(r.members)&&r.members.includes(currentUser?.uid)))}
+function renderRoomsList(){
+ const list=$("roomsList");if(!list)return;list.replaceChildren();
+ const rooms=visibleRoomItems();
+ $("roomsStatus").textContent=rooms.length?`${rooms.length} room ditemukan.`:"Belum ada room. Buat room pertama!";
+ rooms.forEach(room=>{
+  const row=document.createElement("div");row.className="room-card";
+  const info=document.createElement("div");info.className="room-card-info";
+  const name=document.createElement("div");name.className="room-card-name";name.textContent="# "+room.name;
+  const meta=document.createElement("div");meta.className="room-card-meta";meta.textContent=(room.isPublic?"PUBLIC":"PRIVATE")+" · "+(room.members?.length||0)+" anggota"+(room.description?" · "+room.description:"");
+  info.append(name,meta);
+  const enter=document.createElement("button");enter.type="button";enter.textContent=(selectedChat.type==="room"&&selectedChat.id===room.id)?"SEDANG DIBUKA":"MASUK";enter.disabled=selectedChat.type==="room"&&selectedChat.id===room.id;enter.onclick=async()=>{await selectRoom(room);if($("roomsDialog").open)$ ("roomsDialog").close()};
+  row.append(info,enter);list.appendChild(row);
+ });
+}
+async function selectRoom(room){
+ if(!currentUser||!room?.id)return;
+ try{
+  let fresh=room;
+  const roomRef=doc(db,"chatRooms",room.id);
+  if(room.isPublic===true&&!(room.members||[]).includes(currentUser.uid)){
+   await updateDoc(roomRef,{members:arrayUnion(currentUser.uid),updatedAt:serverTimestamp()});
+   fresh={...room,members:[...(room.members||[]),currentUser.uid]};
+  }else if(room.isPublic!==true&&!(room.members||[]).includes(currentUser.uid)){
+   alert("Room privat ini hanya bisa dibuka oleh anggota yang diundang.");return;
+  }
+  stopActiveChat();selectedChat={type:"room",key:"room:"+room.id,id:room.id,name:fresh.name||"CHAT ROOM",description:fresh.description||"",isPublic:!!fresh.isPublic,ownerUid:fresh.ownerUid,members:fresh.members||[]};
+  unreadCounts.delete(selectedChat.key);clearError();setChatHeader();renderContacts();await startActiveChat();
+ }catch(error){showError(error);setConnection("connectionError");alert("Tidak bisa masuk room. Pastikan Firestore Rules untuk chatRooms sudah dipasang.")}
+}
+$("roomsButton").onclick=()=>{$("roomsDialog").showModal();renderRoomsList()};
+$("closeRoomsButton").onclick=()=>$ ("roomsDialog").close();
+$("createRoomForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!currentUser)return;
+ const name=$("roomNameInput").value.trim(),description=$("roomDescriptionInput").value.trim(),isPublic=$("roomVisibilityInput").value==="public";
+ if(name.length<3||name.length>36){alert("Nama room harus 3–36 karakter.");return}
+ const button=$("createRoomButton");button.disabled=true;
+ try{
+  const created=await addDoc(collection(db,"chatRooms"),{name,description,isPublic,ownerUid:currentUser.uid,ownerName:profileOf(currentUser.uid).displayName||defaultName(currentUser),members:[currentUser.uid],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+  const room={id:created.id,name,description,isPublic,ownerUid:currentUser.uid,ownerName:profileOf(currentUser.uid).displayName||defaultName(currentUser),members:[currentUser.uid]};
+  $("createRoomForm").reset();$("roomsDialog").close();await selectRoom(room);beep(700,.1);
+ }catch(error){console.error(error);alert("Room gagal dibuat. Periksa Firestore Rules dan koneksi Firebase.");showError(error)}
+ finally{button.disabled=false}
+});
+function openRoomDetails(){
+ if(selectedChat.type!=="room")return;
+ const room=roomItems.find(r=>r.id===selectedChat.id)||selectedChat;
+ $("roomDetailsTitle").textContent="# "+(room.name||selectedChat.name);
+ $("roomDetailsDescription").textContent=room.description||"Tidak ada deskripsi.";
+ $("roomDetailsMeta").textContent=(room.isPublic?"PUBLIC ROOM":"PRIVATE ROOM")+" · Pemilik: "+(room.ownerName||profileOf(room.ownerUid).displayName||"Pengguna")+" · "+(room.members?.length||0)+" anggota";
+ const members=$("roomMembersList");members.replaceChildren();
+ (room.members||[]).forEach(uid=>{const row=document.createElement("div");row.className="room-card";const info=document.createElement("div");info.className="room-card-info";const prof=profileOf(uid);const name=document.createElement("div");name.className="room-card-name";name.textContent=prof.displayName||"Pengguna";const meta=document.createElement("div");meta.className="room-card-meta";meta.textContent=uid===room.ownerUid?"PEMILIK ROOM":"ANGGOTA";info.append(name,meta);if(uid===room.ownerUid){const badge=document.createElement("span");badge.className="room-owner-badge";badge.textContent="OWNER";row.append(info,badge)}else row.append(info);members.appendChild(row)});
+ $("roomInviteForm").hidden=room.ownerUid!==currentUser?.uid;
+ $("roomDetailsDialog").showModal();
+}
+$("roomInfoButton").onclick=openRoomDetails;
+$("closeRoomDetailsButton").onclick=()=>$ ("roomDetailsDialog").close();
+$("roomInviteForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(selectedChat.type!=="room"||!currentUser)return;
+ const room=roomItems.find(r=>r.id===selectedChat.id)||selectedChat;
+ if(room.ownerUid!==currentUser.uid){alert("Hanya pemilik room yang bisa mengundang anggota.");return}
+ const username=$("roomInviteUsername").value.trim().replace(/^@/,"").toLowerCase();if(!username)return;
+ const target=allProfiles.find(p=>(p.usernameLower||p.displayName||"").toLowerCase()===username&&p.uid!==currentUser.uid);
+ if(!target){alert("Username tidak ditemukan.");return}
+ if(!friendUids.has(target.uid)){alert("Tambahkan pengguna sebagai teman terlebih dahulu.");return}
+ if(blockedUids.has(target.uid)){alert("Kamu memblokir pengguna ini. Buka blokir sebelum mengundang.");return}
+ if((room.members||[]).includes(target.uid)){alert("Pengguna sudah menjadi anggota room.");return}
+ try{await updateDoc(doc(db,"chatRooms",room.id),{members:arrayUnion(target.uid),updatedAt:serverTimestamp()});$("roomInviteUsername").value="";alert("Undangan berhasil ditambahkan. Pengguna kini anggota room.");openRoomDetails()}
+ catch(error){showError(error);alert("Undangan gagal. Periksa Firestore Rules.")}
+});
+
+async function selectLobby(){stopActiveChat();selectedChat={type:"lobby",key:"lobby",id:"general",name:"INTERNAL LOBBY"};unreadCounts.delete("lobby");setChatHeader();renderContacts();await startActiveChat()}
+async function selectPrivate(profile){if(!currentUser||profile.uid===currentUser.uid)return;if(blockedUids.has(profile.uid)){alert(language==="id"?"Pengguna ini kamu blokir. Buka menu PRIVASI untuk membuka blokirnya.":"You blocked this user. Open PRIVACY to unblock them.");return}if(!friendUids.has(profile.uid)){alert(language==="id"?"Tambahkan teman dan tunggu permintaan diterima sebelum memulai chat pribadi.":"Add this user and wait until the request is accepted before starting a private chat.");return}stopActiveChat();const ids=[currentUser.uid,profile.uid].sort(),id=convId(ids[0],ids[1]);selectedChat={type:"private",key:"dm:"+profile.uid,id,userId:profile.uid,name:profile.displayName||"Guest"};unreadCounts.delete(selectedChat.key);clearError();setChatHeader();renderContacts();try{const convRef=doc(db,"conversations",id);await setDoc(convRef,{participants:ids,createdAt:serverTimestamp()},{merge:true});await startActiveChat()}catch(error){showError(error);setConnection("connectionError")}}
+async function startActiveChat(){if(!currentUser)return;setConnection("connectingFirebase");setChatHeader();const seg=currentSegments(),col=collection(db,...seg),q=query(col,orderBy("createdAt","desc"),limit(100));let initialized=false;const activeKey=chatKey();stopMessages=onSnapshot(q,snap=>{latestMessages=snap.docs.slice().reverse().map(d=>({id:d.id,...d.data()}));if(initialized){snap.docChanges().forEach(change=>{if(change.type==="added"){const m=change.doc.data();if(m.senderId!==currentUser.uid&&(document.hidden||!document.hasFocus())){unreadCounts.set(activeKey,(unreadCounts.get(activeKey)||0)+1);notifyMessage(m)}}})}initialized=true;latestMessages.forEach(m=>watchReactions(m.id,activeKey,seg));markVisibleMessagesRead(latestMessages,seg);renderMessages();setConnection("connected");renderContacts()},error=>{setConnection("connectionError");showError(error)});startTypingListener()}
+function watchReactions(messageId,activeKey,base){const key=activeKey+"|"+messageId;if(reactionUnsubs.has(key))return;const unsub=onSnapshot(collection(db,...base,messageId,"reactions"),snap=>{reactionCache.set(key,snap.docs.map(d=>({uid:d.id,...d.data()})));renderMessages()},e=>console.warn("Reaction listener",e));reactionUnsubs.set(key,unsub)}
+async function markVisibleMessagesRead(messages,base){if(!currentUser||document.hidden)return;for(const m of messages){if(m.senderId===currentUser.uid||!Array.isArray(m.readBy)||m.readBy.includes(currentUser.uid))continue;try{await updateDoc(doc(db,...base,m.id),{readBy:arrayUnion(currentUser.uid)})}catch(e){console.warn("Read receipt update",e)}}
+}
+function renderContacts(){const list=$("contactList");if(!list)return;list.replaceChildren();const search=$("search").value.trim().toLowerCase();const lobby=document.createElement("button");lobby.className="contact"+(selectedChat.type==="lobby"?" active":"");const dot=document.createElement("span");dot.className="presence online";const txt=document.createElement("span");txt.className="contact-text";const name=document.createElement("span");name.className="contact-name";name.textContent=t("internalLobby");const sub=document.createElement("small");sub.className="contact-sub";sub.textContent=t("connected");txt.append(name,sub);lobby.append(dot,txt);addUnreadBadge(lobby,"lobby");lobby.onclick=selectLobby;if(!search||name.textContent.toLowerCase().includes(search))list.appendChild(lobby);
+ const visibleRooms=visibleRoomItems().filter(r=>(r.name||"").toLowerCase().includes(search));const roomLabel=document.createElement("div");roomLabel.className="sidebar-section-label";roomLabel.textContent="CHAT ROOMS";if(!search||visibleRooms.length)list.appendChild(roomLabel);
+ visibleRooms.forEach(room=>{const btn=document.createElement("button");btn.className="contact"+(selectedChat.type==="room"&&selectedChat.id===room.id?" active":"");const pd=document.createElement("span");pd.className="presence online";const box=document.createElement("span");box.className="contact-text";const nm=document.createElement("span");nm.className="contact-name";nm.textContent="# "+(room.name||"ROOM");const st=document.createElement("small");st.className="contact-sub";st.textContent=(room.isPublic?"PUBLIC":"PRIVATE")+" · "+(room.members?.length||0)+" anggota";box.append(nm,st);btn.append(pd,box);addUnreadBadge(btn,"room:"+room.id);btn.onclick=()=>selectRoom(room);list.appendChild(btn)});
+ const friends=allProfiles.filter(p=>p.uid!==currentUser?.uid&&friendUids.has(p.uid)&&!blockedUids.has(p.uid)).filter(p=>(p.displayName||"").toLowerCase().includes(search)).sort((a,b)=>(a.displayName||"").localeCompare(b.displayName||""));const friendsLabel=document.createElement("div");friendsLabel.className="sidebar-section-label";friendsLabel.textContent="TEMAN";if(!search||friends.length)list.appendChild(friendsLabel);friends.forEach(p=>{const btn=document.createElement("button");btn.className="contact"+(selectedChat.type==="private"&&selectedChat.userId===p.uid?" active":"");const pd=document.createElement("span");pd.className="presence"+(isOnline(p)?" online":"");const box=document.createElement("span");box.className="contact-text";const nm=document.createElement("span");nm.className="contact-name";nm.textContent=p.displayName||"Guest";const st=document.createElement("small");st.className="contact-sub";st.textContent=isOnline(p)?t("online"):t("offline");box.append(nm,st);btn.append(pd,box);addUnreadBadge(btn,"dm:"+p.uid);btn.onclick=()=>selectPrivate(p);list.appendChild(btn)});if(!friends.length&&!visibleRooms.length){const empty=document.createElement("p");empty.className="empty-note";empty.style.padding="8px";empty.textContent=t("noFriends");list.appendChild(empty)}updateOnlineCount();updateUnreadStatus();setChatHeader()}
+function addUnreadBadge(btn,key){const n=unreadCounts.get(key)||0;if(!n)return;const badge=document.createElement("span");badge.className="unread";badge.textContent=n>99?"99+":String(n);btn.appendChild(badge)}
+function renderMessages(){const area=$("messages");if(!area)return;area.replaceChildren();const search=$("messageSearch").value.trim().toLowerCase();const visible=latestMessages.filter(m=>!search||(m.text||"").toLowerCase().includes(search)||(m.senderName||"").toLowerCase().includes(search));if(!visible.length){const empty=document.createElement("p");empty.className="empty-note";empty.style.textAlign="center";empty.textContent=search?t("searchEmpty"):t("noMessages");area.appendChild(empty);return}visible.forEach(m=>{const mine=m.senderId===currentUser?.uid,row=document.createElement("div");row.className="message-row"+(mine?" me":"");const p=profileOf(m.senderId),av=document.createElement("div");av.className="avatar";setAvatar(av,m.senderId,"",p.photoData,p.displayName||m.senderName);const body=document.createElement("div");body.className="message-body";const bubble=document.createElement("div");bubble.className="msg"+(mine?" me":"");if(m.replyTo){const quote=document.createElement("div");quote.className="reply-quote";quote.textContent="↪ "+(m.replyTo.senderName||t("guest"))+": "+(m.replyTo.text||"[image]");bubble.appendChild(quote)}if(m.text){const txt=document.createElement("div");txt.textContent=m.text;bubble.appendChild(txt)}if(m.imageData){const img=document.createElement("img");img.className="msg-image";img.src=m.imageData;img.alt="Chat attachment";img.loading="lazy";bubble.appendChild(img)}const meta=document.createElement("small");meta.className="meta";const time=m.createdAt?.toDate?m.createdAt.toDate().toLocaleTimeString(language==="id"?"id-ID":"en-US",{hour:"2-digit",minute:"2-digit"}):(language==="id"?"baru saja":"just now");meta.textContent=(p.displayName||m.senderName||t("guest"))+" · "+time+(m.editedAt?" · "+t("edited"):"");if(mine){const peerRead=selectedChat.type==="private"?m.readBy?.includes(selectedChat.userId):(m.readBy||[]).some(uid=>uid!==currentUser.uid);meta.textContent+=" · "+(peerRead?t("read"):t("sent"))}bubble.appendChild(meta);const translation=document.createElement("div");translation.className="translation";translation.hidden=true;bubble.appendChild(translation);body.appendChild(bubble);const actions=document.createElement("div");actions.className="message-actions";const reply=document.createElement("button");reply.className="mini-btn";reply.textContent="↩ "+t("reply");reply.onclick=()=>setReply(m);actions.appendChild(reply);const trBtn=document.createElement("button");trBtn.className="mini-btn";trBtn.textContent=t("translate");trBtn.onclick=()=>translateMessage(m.text||"",translation,trBtn);actions.appendChild(trBtn);if(mine){const edit=document.createElement("button");edit.className="mini-btn";edit.textContent=t("edit");edit.onclick=()=>editMessage(m);actions.appendChild(edit);const del=document.createElement("button");del.className="mini-btn";del.textContent=t("delete");del.onclick=()=>deleteMessage(m);actions.appendChild(del)}const key=chatKey()+"|"+m.id,reactions=reactionCache.get(key)||[];REACTIONS.forEach(emoji=>{const rs=reactions.filter(r=>r.emoji===emoji),rb=document.createElement("button");rb.className="mini-btn"+(rs.some(r=>r.uid===currentUser?.uid)?" active":"");rb.textContent=emoji+(rs.length?" "+rs.length:"");rb.onclick=()=>toggleReaction(m.id,emoji);actions.appendChild(rb)});body.appendChild(actions);row.append(av,body);area.appendChild(row)});area.scrollTop=area.scrollHeight}
+function setReply(m){pendingReply={id:m.id,senderName:m.senderName||profileOf(m.senderId).displayName||t("guest"),text:(m.text||"").slice(0,160)};$("replyPreviewText").textContent=t("replyingTo")+" "+pendingReply.senderName+": "+(pendingReply.text||"[image]");$("replyPreview").hidden=false;$("messageInput").focus()}
+function clearReply(){pendingReply=null;$("replyPreview").hidden=true;$("replyPreviewText").textContent=""}
+$("cancelReplyButton").onclick=clearReply;
+async function editMessage(m){const newText=prompt(t("editPrompt"),m.text||"");if(newText===null)return;if(newText.length>2000){alert("Max 2000 characters.");return}try{await updateDoc(doc(db,...currentSegments(),m.id),{text:newText,editedAt:serverTimestamp()})}catch(e){showError(e)}}
+async function deleteMessage(m){if(!confirm(t("deleteConfirm")))return;try{await deleteDoc(doc(db,...currentSegments(),m.id))}catch(e){showError(e)}}
+async function toggleReaction(messageId,emoji){if(!currentUser)return;const ref=doc(db,...currentSegments(),messageId,"reactions",currentUser.uid);try{const existing=reactionCache.get(chatKey()+"|"+messageId)?.find(r=>r.uid===currentUser.uid);if(existing?.emoji===emoji)await deleteDoc(ref);else await setDoc(ref,{uid:currentUser.uid,emoji,updatedAt:serverTimestamp()})}catch(e){showError(e)}}
+async function translateMessage(text,output,button){
+ if(!text.trim()){alert(language==="id"?"Pesan ini tidak memiliki teks.":"This message has no text.");return}
+ if(!output.hidden){output.hidden=true;return}
+ if(output.textContent){output.hidden=false;return}
+ if(new TextEncoder().encode(text).length>500){alert(t("translateTooLong"));return}
+ const sourceInput=prompt(language==="id"?"Bahasa ASAL (id=Indonesia, en=English):":"SOURCE language (id=Indonesian, en=English):",language==="id"?"en":"id");
+ if(sourceInput===null)return;
+ const source=sourceInput.trim().toLowerCase();
+ if(!["id","en"].includes(source)){alert("Use id or en.");return}
+ const targetInput=prompt(language==="id"?"Bahasa TUJUAN (id=Indonesia, en=English):":"TARGET language (id=Indonesian, en=English):",source==="id"?"en":"id");
+ if(targetInput===null)return;
+ const target=targetInput.trim().toLowerCase();
+ if(!["id","en"].includes(target)||target===source){alert(language==="id"?"Pilih bahasa tujuan yang berbeda (id atau en).":"Choose a different target language (id or en).");return}
+ if(!confirm(t("translateConsent")))return;
+ button.disabled=true;button.textContent=t("translationBusy");
+ try{
+  const url="https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair="+encodeURIComponent(source+"|"+target);
+  const res=await fetch(url);if(!res.ok)throw new Error("HTTP "+res.status);
+  const data=await res.json();
+  if(data?.responseStatus&&Number(data.responseStatus)!==200)throw new Error("Translation response "+data.responseStatus);
+  const translated=data?.responseData?.translatedText;if(!translated)throw new Error("No translation");
+  output.replaceChildren();
+  const strong=document.createElement("strong");strong.textContent=(target==="id"?"Bahasa Indonesia: ":"English: ");
+  const span=document.createElement("span");span.textContent=translated;
+  const note=document.createElement("small");note.style.display="block";note.style.marginTop="5px";note.textContent=t("translationSource");
+  output.append(strong,span,note);output.hidden=false;
+ }catch(e){console.warn(e);alert(t("translateError"))}
+ finally{button.disabled=false;button.textContent=t("translate")}
+}
+
+function startTypingListener(){if(stopTyping)stopTyping();stopTyping=onSnapshot(collection(db,...currentTyping()),snap=>{const now=Date.now(),names=[];snap.docs.forEach(d=>{if(d.id===currentUser?.uid)return;const data=d.data(),ts=data.updatedAt?.toMillis?.();if(ts&&now-ts<12000)names.push(data.displayName||t("guest"))});typingStatus=names.length?names.slice(0,2).join(", ")+" "+t("typingLabel"):"";$("typingIndicator").textContent=typingStatus},e=>console.warn("Typing listener",e))}
+async function writeTyping(){if(!currentUser)return;const value=$("messageInput").value;if(!value.trim()){await removeTyping();return}const now=Date.now();if(now-lastTypingWrite>3000){lastTypingWrite=now;try{await setDoc(doc(db,...currentTyping(),currentUser.uid),{uid:currentUser.uid,displayName:profileOf(currentUser.uid).displayName||defaultName(currentUser),updatedAt:serverTimestamp()},{merge:true})}catch(e){console.warn("Typing update",e)}}clearTimeout(typingTimer);typingTimer=setTimeout(removeTyping,7000)}
+async function removeTyping(){clearTimeout(typingTimer);if(!currentUser)return;try{await deleteDoc(doc(db,...currentTyping(),currentUser.uid))}catch{}}
+$("messageInput").addEventListener("input",writeTyping);
+$("messageInput").addEventListener("blur",removeTyping);
+
+function renderPendingAttachment(){const box=$("attachmentPreview");box.hidden=!pendingImageData;if(pendingImageData){$("attachmentPreviewName").textContent=pendingFileName||t("attachmentReady");$("attachmentPreviewImage").src=pendingImageData}}
+function clearAttachment(){pendingImageData=null;pendingFileName="";$("attachmentInput").value="";renderPendingAttachment()}
+$("attachmentButton").onclick=()=>$("attachmentInput").click();
+$("removeAttachmentButton").onclick=clearAttachment;
+function readAsDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(String(reader.result));reader.onerror=()=>reject(new Error(t("imageOpen")));reader.readAsDataURL(file)})}
+async function prepareAttachment(file){
+ if(!file.type.startsWith("image/"))throw new Error(t("badImage"));
+ if(file.type==="image/gif"){if(file.size>240*1024)throw new Error(t("bigImage"));return await readAsDataURL(file)}
+ if(file.size>8*1024*1024)throw new Error(t("bigImage"));
+ const data=await new Promise((resolve,reject)=>{
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+   URL.revokeObjectURL(url);
+   try{
+    const canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");
+    if(!ctx)throw new Error(t("imageProcess"));
+    const ratio=Math.min(1,640/Math.max(img.naturalWidth,img.naturalHeight));
+    canvas.width=Math.max(1,Math.round(img.naturalWidth*ratio));
+    canvas.height=Math.max(1,Math.round(img.naturalHeight*ratio));
+    ctx.drawImage(img,0,0,canvas.width,canvas.height);
+    for(const q of [.75,.6,.45,.3]){
+     const out=canvas.toDataURL("image/jpeg",q);
+     if(out.length<330000){resolve(out);return}
+    }
+    reject(new Error(t("imageCompress")));
+   }catch(e){reject(e)}
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error(t("imageOpen")))};
+  img.src=url;
+ });
+ return data;
+}
+$("attachmentInput").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{pendingImageData=await prepareAttachment(file);pendingFileName=file.name;renderPendingAttachment()}
+ catch(error){alert(error.message||t("imageOpen"));clearAttachment()}
+});
+$("messageForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!currentUser)return;
+ const text=$("messageInput").value.trim();
+ if(!text&&!pendingImageData)return;
+ if(text.length>2000)return;
+ $("sendButton").disabled=true;
+ try{
+  await addDoc(collection(db,...currentSegments()),{
+   senderId:currentUser.uid,
+   senderName:profileOf(currentUser.uid).displayName||defaultName(currentUser),
+   text,
+   imageData:pendingImageData||null,
+   replyTo:pendingReply?{id:pendingReply.id,senderName:pendingReply.senderName,text:pendingReply.text}:null,
+   createdAt:serverTimestamp(),
+   readBy:[currentUser.uid]
+  });
+  $("messageInput").value="";clearAttachment();clearReply();await removeTyping();beep(560,.06);
+ }catch(error){setConnection("messageNotSent");showError(error)}
+ finally{$("sendButton").disabled=false;$("messageInput").focus()}
+});
+$("emojiButton").onclick=()=>{
+ $("emojiPicker").hidden=!$("emojiPicker").hidden;
+ if(!$("emojiPicker").children.length)EMOJIS.forEach(emoji=>{
+  const b=document.createElement("button");b.type="button";b.textContent=emoji;
+  b.onclick=()=>{$("messageInput").value+=emoji;$("messageInput").focus();$("emojiPicker").hidden=true;writeTyping()};
+  $("emojiPicker").appendChild(b);
+ });
+};
+$("messageSearch").addEventListener("input",renderMessages);
+
+function formatJoinedDate(profile){
+ const raw=profile?.joinedAt||profile?.createdAt;
+ let date=null;
+ try{date=raw?.toDate?raw.toDate():(raw instanceof Date?raw:(raw?new Date(raw):null))}catch{}
+ if(!date||Number.isNaN(date.getTime()))return t("joinedUnknown");
+ return date.toLocaleDateString(language==="id"?"id-ID":"en-US",{year:"numeric",month:"long",day:"numeric"});
+}
+function openProfileViewer(uid){
+ if(!uid)return;
+ const p=profileOf(uid);
+ const displayName=p.displayName||defaultName(uid===currentUser?.uid?currentUser:null);
+ setAvatar($("profileViewerAvatar"),p.uid,p.email,p.photoData,displayName);
+ $("profileViewerName").textContent=displayName;
+ $("profileViewerUsername").textContent="@"+(p.usernameLower||displayName.toLowerCase());
+ $("profileViewerTitle").textContent=uid===currentUser?.uid?t("profileSelf"):t("profileOf");
+ $("profileViewerStatus").textContent=(p.personalStatus||"").trim()||t("profileNoStatus");
+ const online=isOnline({...p,uid});
+ $("profileViewerPresence").replaceChildren();
+ const dot=document.createElement("span");dot.className="profile-online-dot"+(online?"":" offline");
+ const label=document.createElement("span");label.textContent=online?t("profileOnline"):t("profileOffline");
+ $("profileViewerPresence").append(dot,label);
+ $("profileViewerJoined").textContent=formatJoinedDate(p);
+ if(!$("profileViewerDialog").open)$("profileViewerDialog").showModal();
+}
+$("viewMyProfileButton").onclick=()=>currentUser&&openProfileViewer(currentUser.uid);
+$("viewContactProfileButton").onclick=()=>selectedChat.type==="private"&&openProfileViewer(selectedChat.userId);
+$("closeProfileViewerButton").onclick=()=>$("profileViewerDialog").close();
+
+$("editProfileButton").onclick=()=>{
+ if(!currentUser)return;
+ const p=profileOf(currentUser.uid);
+ $("displayNameInput").value=p.displayName||defaultName(currentUser);
+ $("personalStatusInput").value=p.personalStatus||"";
+ $("profileDialog").showModal();
+};
+$("cancelProfileButton").onclick=()=>$("profileDialog").close();
+$("profileForm").addEventListener("submit",async e=>{
+ e.preventDefault();if(!currentUser)return;
+ const name=$("displayNameInput").value.trim().replace(/^@/,"");
+ const personalStatus=$("personalStatusInput").value.trim().slice(0,80);
+ if(name.length<2||name.length>32)return;
+ const key=name.toLowerCase();
+ const duplicate=allProfiles.find(p=>p.uid!==currentUser.uid&&(p.usernameLower||p.displayName?.toLowerCase())===key);
+ if(duplicate){alert(language==="id"?"Username sudah digunakan. Pilih yang lain.":"Username already taken. Choose another.");return}
+ const b=$("profileForm").querySelector('[type="submit"]');b.disabled=true;
+ try{
+  await setDoc(profileDoc(currentUser.uid),{displayName:name,usernameLower:key,personalStatus,updatedAt:serverTimestamp()},{merge:true});
+  profileCache.set(currentUser.uid,{...profileOf(currentUser.uid),displayName:name,usernameLower:key,personalStatus});
+  $("profileDialog").close();updateOwnAvatar();updateUserStatus();renderContacts();renderMessages();
+ }catch(error){showError(error)}
+ finally{b.disabled=false}
+});
+
+function compressProfilePhoto(file){
+ return new Promise((resolve,reject)=>{
+  if(!file.type.startsWith("image/")){reject(new Error(t("badImage")));return}
+  if(file.size>8*1024*1024){reject(new Error(t("bigImage")));return}
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+   URL.revokeObjectURL(url);
+   try{
+    const side=Math.min(img.naturalWidth,img.naturalHeight),sx=(img.naturalWidth-side)/2,sy=(img.naturalHeight-side)/2,canvas=document.createElement("canvas"),ctx=canvas.getContext("2d");
+    if(!ctx)throw new Error(t("imageProcess"));
+    for(const size of [128,96,64]){
+     canvas.width=size;canvas.height=size;
+     ctx.drawImage(img,sx,sy,side,side,0,0,size,size);
+     for(const q of [.65,.5,.35]){
+      const out=canvas.toDataURL("image/jpeg",q);
+      if(out.length<=70000){resolve(out);return}
+     }
+    }
+    reject(new Error(t("imageCompress")));
+   }catch(error){reject(error)}
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);reject(new Error(t("imageOpen")))};
+  img.src=url;
+ });
+}
+$("profilePhotoButton").onclick=()=>{
+ if(!currentUser){alert(t("photoNeedLogin"));return}
+ $("profilePhotoInput").click();
+};
+$("profilePhotoInput").addEventListener("change",async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ const b=$("profilePhotoButton");b.disabled=true;setProfileStatus(t("photoProgress"));
+ try{
+  const photoData=await compressProfilePhoto(file);
+  await setDoc(profileDoc(currentUser.uid),{photoData,updatedAt:serverTimestamp()},{merge:true});
+  profileCache.set(currentUser.uid,{...profileOf(currentUser.uid),photoData});
+  updateOwnAvatar();renderContacts();renderMessages();setProfileStatus(t("photoSaved"));
+ }catch(error){setProfileStatus(t("photoFail"));alert(t("photoError",{error:error.message||t("genericError")}))}
+ finally{b.disabled=false;e.target.value=""}
+});
+
+// FRIEND REQUESTS
+async function addFriend(){
+ if(!currentUser)return;
+ const input=prompt(t("usernamePrompt"));if(input===null)return;
+ const username=input.trim().replace(/^@/,"").toLowerCase();if(!username)return;
+ const p=allProfiles.find(p=>(p.usernameLower||p.displayName?.toLowerCase())===username);
+ if(!p){alert(t("userNotFound"));return}
+ if(p.uid===currentUser.uid){alert(t("selfAdd"));return}
+ if(friendUids.has(p.uid)){alert(t("alreadyFriends"));return}
+ const forward=doc(db,"friendRequests",friendRequestId(currentUser.uid,p.uid));
+ const outgoing=friendRequestsOut.find(r=>r.to===p.uid);
+ const incoming=friendRequestsIn.find(r=>r.from===p.uid);
+ try{
+  if(incoming&&incoming.status==="pending"){alert(language==="id"?"Orang ini sudah mengirim permintaan. Buka PERMINTAAN untuk menerimanya.":"This person already sent you a request. Open REQUESTS to accept.");return}
+  if(outgoing&&outgoing.status==="pending"){alert(t("pendingRequest"));return}
+  if(outgoing&&outgoing.status==="accepted"){alert(t("alreadyFriends"));return}
+  const payload={from:currentUser.uid,to:p.uid,fromName:profileOf(currentUser.uid).displayName||defaultName(currentUser),status:"pending",createdAt:serverTimestamp()};
+  if(outgoing&&outgoing.status==="declined")await updateDoc(forward,{status:"pending",fromName:payload.fromName,createdAt:serverTimestamp()});
+  else await setDoc(forward,payload);
+  alert(t("requestSent"));
+ }catch(error){showError(error)}
+}
+$("addFriendButton").onclick=addFriend;
+
+function listenRequests(){
+ if(stopIncomingRequests)stopIncomingRequests();
+ if(stopOutgoingRequests)stopOutgoingRequests();
+ const uid=currentUser.uid;
+ stopIncomingRequests=onSnapshot(query(collection(db,"friendRequests"),where("to","==",uid)),snap=>{
+  friendRequestsIn=snap.docs.map(d=>({id:d.id,...d.data()}));rebuildFriends();renderRequests();renderContacts();
+ },showError);
+ stopOutgoingRequests=onSnapshot(query(collection(db,"friendRequests"),where("from","==",uid)),snap=>{
+  friendRequestsOut=snap.docs.map(d=>({id:d.id,...d.data()}));rebuildFriends();renderRequests();renderContacts();
+ },showError);
+}
+function rebuildFriends(){
+ friendUids=new Set();
+ friendRequestsIn.filter(r=>r.status==="accepted").forEach(r=>friendUids.add(r.from));
+ friendRequestsOut.filter(r=>r.status==="accepted").forEach(r=>friendUids.add(r.to));
+ renderContacts();
+}
+async function requestAction(req,status){try{await updateDoc(doc(db,"friendRequests",req.id),{status})}catch(error){showError(error)}}
+function renderRequests(){
+ const root=$("requestsList");if(!root)return;root.replaceChildren();$("requestsTitle").textContent=t("requests");
+ const incoming=friendRequestsIn.filter(r=>r.status==="pending"),outgoing=friendRequestsOut.filter(r=>r.status==="pending");
+ const h1=document.createElement("h4");h1.textContent=t("incomingRequests");root.appendChild(h1);
+ if(!incoming.length){const p=document.createElement("p");p.className="empty-note";p.textContent=t("noRequests");root.appendChild(p)}
+ incoming.forEach(req=>{
+  const row=document.createElement("div");row.className="modal-item";
+  const name=document.createElement("span");name.className="modal-item-name";name.textContent=profileOf(req.from).displayName||req.fromName||req.from;
+  const accept=document.createElement("button");accept.className="small-btn greenbtn";accept.textContent=t("accept");accept.onclick=()=>requestAction(req,"accepted");
+  const decline=document.createElement("button");decline.className="small-btn";decline.textContent=t("decline");decline.onclick=()=>requestAction(req,"declined");
+  const buttons=document.createElement("span");buttons.append(accept,decline);row.append(name,buttons);root.appendChild(row);
+ });
+ const h2=document.createElement("h4");h2.textContent=t("outgoingRequests");root.appendChild(h2);
+ outgoing.forEach(req=>{
+  const row=document.createElement("div");row.className="modal-item";
+  const name=document.createElement("span");name.className="modal-item-name";name.textContent=profileOf(req.to).displayName||req.to;
+  const status=document.createElement("small");status.textContent=t(req.status==="accepted"?"accepted":req.status==="declined"?"declined":"pending");
+  row.append(name,status);root.appendChild(row);
+ });
+ if(!incoming.length&&!outgoing.length){const p=document.createElement("p");p.className="empty-note";p.textContent=t("noRequests");root.appendChild(p)}
+}
+$("requestsButton").onclick=()=>{$("requestsDialog").showModal();renderRequests()};
+$("closeRequestsButton").onclick=()=>$("requestsDialog").close();
+
+// BLOCK / REPORT
+function listenBlocks(){
+ if(stopBlocks)stopBlocks();
+ stopBlocks=onSnapshot(collection(db,"blocks",currentUser.uid,"users"),snap=>{
+  blockedUids=new Set(snap.docs.map(d=>d.id));renderContacts();setChatHeader();renderBlockedList();
+ },showError);
+}
+async function toggleBlock(){
+ if(selectedChat.type!=="private"||!currentUser)return;
+ const target=selectedChat.userId,ref=doc(db,"blocks",currentUser.uid,"users",target);
+ try{
+  if(blockedUids.has(target)){await deleteDoc(ref)}
+  else{
+   if(!confirm(t("blockConfirm")))return;
+   await setDoc(ref,{userId:target,displayName:profileOf(target).displayName||"Guest",createdAt:serverTimestamp()});
+   await selectLobby();
+  }
+ }catch(error){showError(error)}
+}
+$("blockButton").onclick=toggleBlock;
+$("reportButton").onclick=async()=>{
+ if(selectedChat.type!=="private"||!currentUser)return;
+ const reason=prompt(t("reportPrompt"));if(reason===null||!reason.trim())return;
+ try{
+  await addDoc(collection(db,"reports"),{reporterUid:currentUser.uid,reportedUid:selectedChat.userId,reason:reason.trim().slice(0,500),chatKey:selectedChat.id,createdAt:serverTimestamp()});
+  alert(t("reportSent"));
+ }catch(error){showError(error)}
+};
+$("privacyButton").onclick=()=>{$("privacyDialog").showModal();renderBlockedList()};
+$("closePrivacyButton").onclick=()=>$("privacyDialog").close();
+function renderBlockedList(){
+ const root=$("blockedList");if(!root)return;root.replaceChildren();
+ $("privacyTitle").textContent=t("privacy").toUpperCase();$("privacyIntro").textContent=t("blockedNote");
+ if(!blockedUids.size){const p=document.createElement("p");p.className="empty-note";p.textContent=t("blockedEmpty");root.appendChild(p);return}
+ blockedUids.forEach(uid=>{
+  const row=document.createElement("div");row.className="modal-item";
+  const name=document.createElement("span");name.className="modal-item-name";name.textContent=profileOf(uid).displayName||uid;
+  const btn=document.createElement("button");btn.className="small-btn";btn.textContent=t("unblock");
+  btn.onclick=async()=>{try{await deleteDoc(doc(db,"blocks",currentUser.uid,"users",uid))}catch(error){showError(error)}};
+  row.append(name,btn);root.appendChild(row);
+ });
+}
+
+// NOTIFICATIONS
+async function enableNotifications(){
+ if(!("Notification"in window)){alert(language==="id"?"Browser ini tidak mendukung notifikasi.":"Notifications are not supported in this browser.");return}
+ try{const p=await Notification.requestPermission();$("notificationsButton").textContent=p==="granted"?t("notificationsOn"):t("enableNotifications")}catch{}
+}
+$("notificationsButton").onclick=enableNotifications;
+function notifyMessage(m){
+ if(!("Notification"in window)||Notification.permission!=="granted")return;
+ try{
+  const n=new Notification(m.senderName||t("newMessage"),{body:m.text||t("notificationBody"),tag:"im98-"+m.id});
+  n.onclick=()=>{window.focus();n.close()};
+ }catch{}
+}
+$("logoutButton").onclick=async()=>{try{await removeTyping();await setRealtimeOffline();await setOffline();await signOut(auth)}catch(error){showError(error)}};
+$("search").addEventListener("input",renderContacts);
+
+onAuthStateChanged(auth,async user=>{
+ currentUser=user;
+ if(!user){
+  if(stopProfiles)stopProfiles();
+  if(stopIncomingRequests)stopIncomingRequests();
+  if(stopOutgoingRequests)stopOutgoingRequests();
+  if(stopBlocks)stopBlocks();
+  if(stopPublicRooms)stopPublicRooms();if(stopMemberRooms)stopMemberRooms();
+  stopPublicRooms=stopMemberRooms=null;publicRoomMap.clear();memberRoomMap.clear();roomItems=[];
+  stopProfiles=stopIncomingRequests=stopOutgoingRequests=stopBlocks=null;
+  stopActiveChat();
+  if(presenceTimer)clearInterval(presenceTimer);presenceTimer=null;
+  if(stopRtdbConnected)stopRtdbConnected();
+  if(stopRtdbStatuses)stopRtdbStatuses();
+  stopRtdbConnected=stopRtdbStatuses=null;
+  realtimePresence.clear();
+  allProfiles=[];profileCache.clear();friendUids.clear();blockedUids.clear();friendRequestsIn=[];friendRequestsOut=[];
+  $("myAvatar").textContent="?";updateUserStatus();clearError();setAuthStatus("authPrompt");
+  showScreen(hasPoweredOn?"authScreen":cinematicBootRunning?"bootScreen":"powerScreen");
+  return;
+ }
+ clearError();
+ if(hasPoweredOn)showScreen("messengerApp");
+ try{await ensureProfile(user)}catch(error){showError(error)}
+ if(!currentUser||currentUser.uid!==user.uid)return;
+ startRealtimePresence(user);
+ stopProfiles=onSnapshot(collection(db,"profiles"),snap=>{
+  allProfiles=snap.docs.map(d=>({uid:d.id,...d.data()}));
+  profileCache=new Map(allProfiles.map(p=>[p.uid,p]));
+  updateOwnAvatar();updateUserStatus();updateOnlineCount();renderContacts();renderMessages();renderRoomsList();
+ },showError);
+ listenRequests();listenBlocks();listenRooms();
+ if(presenceTimer)clearInterval(presenceTimer);
+ presenceTimer=setInterval(pulsePresence,30000);
+ await selectLobby();applyLanguage();
+});
+
+function setProfileTextDummy(){}
+applyLanguage();
+showScreen("powerScreen");
+</script>
+</body>
+</html>
